@@ -1,0 +1,79 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{Introduction}{7}{section*.5}%
+\contentsline {section}{\numberline {1}Présentation de la structure d'accueil}{7}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Présentation du laboratoire}{7}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Équipe EDyFI -- Estimation Dynamique et Fusion d'Informations}{8}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Activités et contexte de recherche}{8}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Le service d'accueil et mon positionnement}{8}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Contexte et objectifs du stage}{8}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Sujet et missions}{8}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}État de l'art et bibliographie}{9}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}USV et collecte de déchets marins}{9}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Simulation maritime : VRX et Gazebo}{10}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}RViz2}{11}{subsubsection.2.2.3}%
+\contentsline {subsubsection}{\numberline {2.2.4}Middleware ROS~2}{11}{subsubsection.2.2.4}%
+\contentsline {subsubsection}{\numberline {2.2.5}Modélisation des véhicules marins}{12}{subsubsection.2.2.5}%
+\contentsline {section}{\numberline {3}Mise en place de l'environnement de simulation}{13}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Chaîne logicielle}{13}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Architecture de communication}{13}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Difficultés rencontrées}{13}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Protocole expérimental de validation}{14}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Principe}{14}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Table des expériences}{14}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Justification du choix des consignes}{15}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Séquencement et sécurité du scénario}{15}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Chaîne d'acquisition des données}{15}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Grandeurs enregistrées}{15}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Estimation des vitesses corps}{16}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Représentation du modèle de Fossen}{16}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Contexte historique et motivation}{16}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Formulation générale en six degrés de liberté}{16}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Équations du mouvement}{16}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}Cinématique}{17}{subsubsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.3}Paramètres hydrodynamiques du modèle}{17}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Cinétique}{18}{subsubsection.6.3.1}%
+\contentsline {subsection}{\numberline {6.4}Équations du mouvement relatif et forces environnementales}{18}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Réduction au cas 3-DOF d'un véhicule de surface}{19}{subsection.6.5}%
+\contentsline {paragraph}{Matrice d'inertie $\boldsymbol {M}$.}{20}{section*.16}%
+\contentsline {paragraph}{Matrice de Coriolis--centripète $\boldsymbol {C}(\boldsymbol {\nu })$.}{20}{section*.17}%
+\contentsline {paragraph}{Matrice d'amortissement $\boldsymbol {D}(\boldsymbol {\nu })$.}{20}{section*.18}%
+\contentsline {subsection}{\numberline {6.6}Torseur de propulsion par poussée différentielle}{20}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Modélisation des forces de vent et de houle}{20}{subsection.6.7}%
+\contentsline {subsubsection}{\numberline {6.7.1}Forces de vent}{20}{subsubsection.6.7.1}%
+\contentsline {subsubsection}{\numberline {6.7.2}Forces des vagues}{21}{subsubsection.6.7.2}%
+\contentsline {section}{\numberline {7}Validation}{22}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Méthode}{22}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Métriques de validation}{22}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Résultats}{23}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}Expérience n°1}{23}{subsubsection.7.3.1}%
+\contentsline {paragraph}{Paramètres de l'éprérience.}{23}{section*.21}%
+\contentsline {paragraph}{Indicateurs globaux.}{24}{section*.24}%
+\contentsline {paragraph}{Observations et interprétation}{24}{section*.26}%
+\contentsline {paragraph}{Conclusion sur la validité du modèle}{24}{section*.27}%
+\contentsline {subsubsection}{\numberline {7.3.2}Expérience n°2}{25}{subsubsection.7.3.2}%
+\contentsline {paragraph}{Paramètres de l'éxpérience.}{25}{section*.28}%
+\contentsline {paragraph}{Indicateurs globaux.}{25}{section*.30}%
+\contentsline {paragraph}{Observations et interprétation.}{26}{section*.33}%
+\contentsline {paragraph}{Conclusion sur la validité du modèle.}{27}{section*.34}%
+\contentsline {subsubsection}{\numberline {7.3.3}Expérience n°3}{27}{subsubsection.7.3.3}%
+\contentsline {paragraph}{Paramètres de l'Expérience.}{27}{section*.35}%
+\contentsline {paragraph}{Indicateurs globaux.}{27}{section*.37}%
+\contentsline {paragraph}{Observations et interprétation.}{28}{section*.40}%
+\contentsline {paragraph}{Conclusion sur la validité du modèle.}{28}{section*.41}%
+\contentsline {paragraph}{Conclusion sur la comparaison des 3 expériences et la validation du modèle.}{30}{section*.42}%
+\contentsline {section}{\numberline {8}Guidage et contrôle du catamaran}{31}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Stratégie de guidage}{31}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Architecture logicielle du flux de guidage}{32}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Loi de commande et répartition des poussées}{32}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Résultats de simulation et analyse}{32}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Limites et perspectives d'amélioration}{33}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Conclusion générale et perspectives}{34}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Perspectives}{34}{subsection.9.1}%
+\contentsline {section}{Bibliographie}{36}{section*.46}%
+\contentsline {section}{\numberline {A}Glossaire des variables du modèle de Fossen 3-DOF}{36}{appendix.A}%
+\contentsline {section}{\numberline {B}Relations mathématiques implantées dans les codes}{37}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}Mesures et prétraitements}{37}{subsection.B.1}%
+\contentsline {subsection}{\numberline {B.2}Modèle de Fossen 3-DDL}{38}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}Forces d'environnement}{38}{subsection.B.3}%
+\contentsline {subsection}{\numberline {B.4}Comparaison avec l'accéléromètre}{38}{subsection.B.4}%
+\contentsline {subsection}{\numberline {B.5}Cinématique intégrée}{38}{subsection.B.5}%
