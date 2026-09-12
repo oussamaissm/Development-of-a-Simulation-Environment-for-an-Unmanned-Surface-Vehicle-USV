@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.19)  12 SEP 2026 15:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.19)  12 SEP 2026 16:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1128,12 +1128,12 @@ Package hyperref Info: Link coloring OFF on input line 100.
 \c@lstlisting=\count420
 Package tocbasic Info: setting babel extension for `lol' on input line 100.
 Package babel Info: Main language set to 'french'.
-<logos/EILCO.png, id=220, 301.125pt x 107.2005pt>
+<logos/EILCO.png, id=216, 301.125pt x 107.2005pt>
 File: logos/EILCO.png Graphic file (type png)
 <use logos/EILCO.png>
 Package pdftex.def Info: logos/EILCO.png  used on input line 101.
 (pdftex.def)             Requested size: 159.33821pt x 56.72601pt.
-<logos/LISIC.png, id=222, 384.4764pt x 105.7551pt>
+<logos/LISIC.png, id=218, 384.4764pt x 105.7551pt>
 File: logos/LISIC.png Graphic file (type png)
 <use logos/LISIC.png>
 Package pdftex.def Info: logos/LISIC.png  used on input line 101.
@@ -1149,7 +1149,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 101
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<logos/background.jpg, id=223, 738.76pt x 738.76pt>
+<logos/background.jpg, id=219, 738.76pt x 738.76pt>
 File: logos/background.jpg Graphic file (type jpg)
 <use logos/background.jpg>
 Package pdftex.def Info: logos/background.jpg  used on input line 101.
@@ -1237,7 +1237,7 @@ Overfull \hbox (32.03238pt too wide) in paragraph at lines 226--227
  [][] 
  []
 
-<nodes.png, id=399, 426.59375pt x 239.89626pt>
+<nodes.png, id=394, 426.59375pt x 239.89626pt>
 File: nodes.png Graphic file (type png)
 <use nodes.png>
 Package pdftex.def Info: nodes.png  used on input line 244.
@@ -1250,7 +1250,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [9]
-<garbages.png, id=413, 1200.485pt x 982.67125pt>
+<garbages.png, id=408, 1200.485pt x 982.67125pt>
 File: garbages.png Graphic file (type png)
 <use garbages.png>
 Package pdftex.def Info: garbages.png  used on input line 276.
@@ -1264,7 +1264,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [10 <./nodes.png>]
-<parametre.png, id=423, 233.673pt x 185.37254pt>
+<parametre.png, id=418, 233.673pt x 185.37254pt>
 File: parametre.png Graphic file (type png)
 <use parametre.png>
 Package pdftex.def Info: parametre.png  used on input line 283.
@@ -1278,7 +1278,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [11 <./garbages.png>]
-<wave.png, id=431, 1920.17375pt x 1055.945pt>
+<wave.png, id=426, 1920.17375pt x 1055.945pt>
 File: wave.png Graphic file (type png)
 <use wave.png>
 Package pdftex.def Info: wave.png  used on input line 293.
@@ -1292,7 +1292,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [12 <./parametre.png>]
-<Rviz2.png, id=438, 1860.9525pt x 1039.885pt>
+<Rviz2.png, id=433, 1860.9525pt x 1039.885pt>
 File: Rviz2.png Graphic file (type png)
 <use Rviz2.png>
 Package pdftex.def Info: Rviz2.png  used on input line 306.
@@ -1350,7 +1350,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [17]
-<repere_vent.png, id=499, 336.25626pt x 239.89626pt>
+<repere_vent.png, id=494, 336.25626pt x 239.89626pt>
 File: repere_vent.png Graphic file (type png)
 <use repere_vent.png>
 Package pdftex.def Info: repere_vent.png  used on input line 617.
@@ -1376,7 +1376,7 @@ Overfull \hbox (45.77692pt too wide) in paragraph at lines 653--664
  [][] 
  []
 
-<traj_1.png, id=519, 810.1467pt x 569.4876pt>
+<traj_1.png, id=514, 810.1467pt x 569.4876pt>
 File: traj_1.png Graphic file (type png)
 <use traj_1.png>
 Package pdftex.def Info: traj_1.png  used on input line 685.
@@ -1401,7 +1401,7 @@ Overfull \hbox (21.82974pt too wide) in paragraph at lines 741--753
  [][] 
  []
 
-<comparison_essai2.png, id=535, 867.24pt x 650.43pt>
+<comparison_essai2.png, id=530, 867.24pt x 650.43pt>
 File: comparison_essai2.png Graphic file (type png)
 <use comparison_essai2.png>
 Package pdftex.def Info: comparison_essai2.png  used on input line 792.
@@ -1426,7 +1426,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [23 <./comparison_essai2.png>]
-<comparison_essai1.png, id=551, 867.24pt x 650.43pt>
+<comparison_essai1.png, id=546, 867.24pt x 650.43pt>
 File: comparison_essai1.png Graphic file (type png)
 <use comparison_essai1.png>
 Package pdftex.def Info: comparison_essai1.png  used on input line 832.
@@ -1444,7 +1444,7 @@ Overfull \hbox (21.82974pt too wide) in paragraph at lines 881--894
  [][] 
  []
 
-<comparison_essai3.png, id=565, 867.24pt x 650.43pt>
+<comparison_essai3.png, id=560, 867.24pt x 650.43pt>
 File: comparison_essai3.png Graphic file (type png)
 <use comparison_essai3.png>
 Package pdftex.def Info: comparison_essai3.png  used on input line 930.
@@ -1473,7 +1473,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [27]
-<guide.jpg, id=584, 1013.7875pt x 661.47125pt>
+<guide.jpg, id=579, 1013.7875pt x 661.47125pt>
 File: guide.jpg Graphic file (type jpg)
 <use guide.jpg>
 Package pdftex.def Info: guide.jpg  used on input line 967.
@@ -1487,7 +1487,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [28 <./guide.jpg>]
-<trajectoire_multipoint.png, id=593, 722.7pt x 578.16pt>
+<trajectoire_multipoint.png, id=588, 722.7pt x 578.16pt>
 File: trajectoire_multipoint.png Graphic file (type png)
 <use trajectoire_multipoint.png>
 Package pdftex.def Info: trajectoire_multipoint.png  used on input line 1180.
@@ -1525,6 +1525,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [32]
+Underfull \hbox (badness 6063) in paragraph at lines 1239--1243
+[]\T1/cmr/m/n/12 B. Bin-gham et al., ^^S To-ward ma-ri-time ro-bo-tic si-mu-la-
+tion in Ga-zebo ^^T,
+ []
+
+
+Underfull \hbox (badness 5878) in paragraph at lines 1239--1243
+\T1/cmr/m/n/12 in \T1/cmr/m/it/12 Proc. OCEANS 2019 MTS/IEEE SEAT-TLE\T1/cmr/m/
+n/12 , pp. 1--10, 2019. DOI :
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1533,17 +1544,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [33]
-Underfull \hbox (badness 6063) in paragraph at lines 1246--1250
-[]\T1/cmr/m/n/12 B. Bin-gham et al., ^^S To-ward ma-ri-time ro-bo-tic si-mu-la-
-tion in Ga-zebo ^^T,
- []
-
-
-Underfull \hbox (badness 5878) in paragraph at lines 1246--1250
-\T1/cmr/m/n/12 in \T1/cmr/m/it/12 Proc. OCEANS 2019 MTS/IEEE SEAT-TLE\T1/cmr/m/
-n/12 , pp. 1--10, 2019. DOI :
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1559,15 +1559,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[35]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[36] (./main.aux)
+[35] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-08-10>
@@ -1577,16 +1569,16 @@ L3 programming layer <2026-08-10>
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 3D35EB2E36702CFA46E879DFF7AE1A6C;11408.
+(rerunfilecheck)             Checksum: 0C262A5683B39FAC5C644C02CE2E2091;11062.
  ) 
 Here is how much of TeX's memory you used:
- 39413 strings out of 467099
- 828225 string characters out of 5412502
+ 39408 strings out of 467099
+ 828176 string characters out of 5412502
  1452868 words of memory out of 5000000
- 67972 multiletter control sequences out of 15000+600000
+ 67971 multiletter control sequences out of 15000+600000
  662108 words of font info for 116 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 125i,13n,121p,1189b,1305s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 125i,13n,121p,1189b,1289s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 pdfTeX warning (dest): name{Hfootnote.2} has been referenced but does not exist
 , replaced by a fixed one
@@ -1631,10 +1623,10 @@ public/cm-super/sfsx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-
 super/sfsx1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti
 1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb><
 c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on main.pdf (37 pages, 5355149 bytes).
+Output written on main.pdf (36 pages, 5353593 bytes).
 PDF statistics:
- 894 PDF objects out of 1000 (max. 8388607)
- 736 compressed objects within 8 object streams
- 189 named destinations out of 1000 (max. 500000)
- 512 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 879 PDF objects out of 1000 (max. 8388607)
+ 722 compressed objects within 8 object streams
+ 185 named destinations out of 1000 (max. 500000)
+ 504 words of extra memory for PDF output out of 10000 (max. 10000000)
 

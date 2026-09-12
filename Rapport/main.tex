@@ -1189,17 +1189,10 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 		\item \textbf{Validation du seuil de basculement :} Le rayon de $1$~m s'est avéré adapté. Le drone ne présente pas d'oscillations excessives au voisinage des waypoints et enchaîne les segments de manière fluide.
 	\end{itemize}
 	
-	\subsection{Limites et perspectives d'amélioration}
-	Bien que fonctionnelle pour une navigation basique, la loi de commande proportionnelle présente des limites structurelles mises en évidence lors des tests :
-	\begin{enumerate}
-		\item \textbf{Erreur statique sous perturbation constante :} En présence d'un courant ou d'un vent latéral constant, un contrôleur purement proportionnel génère une erreur de cap résiduelle non nulle (le drone doit "craboter" légèrement pour compenser, ce qu'un simple P ne permet pas d'atteindre parfaitement sans biais).
-		\item \textbf{Réglage du gain $K_p$ :} Un gain trop élevé provoque des dépassements (\emph{overshoot}) et des oscillations en lacet, tandis qu'un gain trop faible rend le système lent à réagir aux changements de cap brusques.
-	\end{enumerate}
-	
-	\textbf{Perspectives :} Pour les futures itérations du projet, l'implémentation d'un correcteur PI (Proportionnel-Intégral-Dérivé) sur l'erreur de cap permettrait d'annuler l'erreur statique grâce au terme intégral. À plus long terme, une loi de guidage LOS avancée, intégrant l'erreur transversale (\emph{cross-track error}) avec une intégration adaptative, offrirait une robustesse accrue pour la collecte précise de déchets en milieu perturbé.
+
 	
 	
-	\section{Conclusion générale et perspectives}
+	\section{Conclusion générale}
 	\label{sec:conclusion}
 	
 	Ce stage avait pour objectif de développer et de valider un environnement de simulation pour un drone de surface autonome (USV), destiné à constituer une base pour le développement ultérieur de systèmes de navigation et de collecte autonome de déchets marins. L'environnement mis en place repose sur l'association de ROS~2, Gazebo et du framework VRX, permettant de reproduire un environnement maritime dynamique intégrant notamment les effets du vent et de la houle. Cette plateforme fournit ainsi un cadre expérimental permettant de tester différentes stratégies de guidage et de commande sans avoir recours immédiatement au véhicule réel.
