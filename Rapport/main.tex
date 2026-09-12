@@ -91,7 +91,7 @@
 \rfoot{\textcolor{bleuprincipal}{\footnotesize EILCO -- 2025/2026}}
 
 % ==================== PAGE DE GARDE ====================
-\titre{Développement d'un environnement de simulation pour drone de surface aquatique (USV)}
+\titre{Développement d'un environnement de simulation pour drone de surface aquatique: Pour le suivi des déchets flotants}
 \sujet{Rapport de stage}
 \UE{Stage Assistant Ingénieur}
 \enseignant{FNADI Mohammed}   % TODO : vérifier le nom du parrain EILCO
@@ -106,7 +106,7 @@
 	\vspace{0.5cm}
 	
 
-	La pollution marine motive le développement de drones de surface autonomes (USV) capables de collecter les macro-déchets. Ce rapport présente un stage assistant ingénieur consacré à l'implementation de l'environnement de simulation VRX pour un USV. La mission consiste à valider le modèle dynamique de Fossen à 3 degrés de liberté utilisé par la simulation : un protocole de huit expériences excitatrices a été conçu, une chaîne d'acquisition multi-capteurs (pose, IMU, propulseurs) a été développée, et les accélérations prédites par le modèle ont été comparées aux accélérations mesurées, en intégrant les forces de vent et de houle. Les écarts analysés permettent de calibrer les paramètres hydrodynamiques et préparent le développement des lois de guidage point à point nécessaires à la collecte de déchets.
+	La pollution marine motive le développement de drones de surface autonomes (USV) capables de collecter les macro-déchets. Ce rapport présente un stage assistant ingénieur consacré à l'implementation de l'environnement de simulation VRX pour un USV. La mission consiste à valider le modèle dynamique de Fossen à 3 degrés de liberté utilisé par la simulation : un protocole de trois expériences a été conçu, une chaîne d'acquisition multi-capteurs (GPS, IMU, propulseurs) a été développée, et les accélérations prédites par le modèle ont été comparées aux accélérations mesurées, en intégrant les forces de vent et de houle. Les écarts analysés permettent de calibrer les paramètres hydrodynamiques et préparent le développement des lois de guidage point à point nécessaires à la collecte de déchets.
 	
 	\newpage
 	
@@ -122,9 +122,7 @@
 		\item[IMU] Inertial Measurement Unit (centrale inertielle)
 		\item[LiDAR] Light Detection And Ranging
 		\item[CSV] Comma-Separated Values
-		\item[LOS] Line-Of-Sight (méthode de guidage)
 		\item[RMSE] Root Mean Square Error (erreur quadratique moyenne)
-		\item[NED] North-East-Down (repère de navigation)
 		\item[GNC] Guidance, Navigation and Control
 		\item[SNAME] Society of Naval Architects and Marine Engineers
 	\end{description}
@@ -144,13 +142,13 @@
 	\section*{Introduction}
 	\addcontentsline{toc}{section}{Introduction}
 	
-	La pollution marine constitue aujourd'hui une crise écologique sans précédent, menaçant la biodiversité et la santé des écosystèmes. Face à ce défi, les drones de surface autonomes (USV) s'imposent comme une solution technologique prometteuse pour automatiser la collecte des macro-déchets et la surveillance environnementale \cite{atron}. Toutefois, le développement et le test de ces systèmes en milieu réel se heurtent à des contraintes logistiques complexes et à des coûts prohibitifs : dépendance aux conditions météorologiques, le cout du matériel et les risques de dommages matériels lors des phases exploratoires de réglage. La simulation numérique permet de lever une grande partie de ces verrous en offrant un environnement de simulation réaliste de milieu marin.
+	La pollution marine constitue aujourd'hui une crise écologique sans précédent, menaçant la biodiversité et la santé des écosystèmes. Face à ce défi, les drones de surface autonomes (USV) s'imposent comme une solution technologique prometteuse pour automatiser la collecte des macro-déchets et la surveillance environnementale \cite{atron}. Toutefois, le développement et le test de ces systèmes en milieu réel se heurtent à des contraintes logistiques complexes et à des coûts prohibitifs : dépendance aux conditions météorologiques, le coût du matériel et les risques de dommages matériels lors des phases exploratoires de réglage. La simulation numérique permet de lever une grande partie de ces verrous en offrant un environnement de simulation réaliste de milieu marin
 	
 	Le framework Virtual RobotX (VRX) \cite{vrx} offre une alternative rigoureuse en permettant de simuler fidèlement un USV au sein d'un environnement maritime dynamique (vagues et vent). C'est dans ce cadre que s'inscrit mon stage, effectué au sein de LISIC, et dont l'objectif est le développement d'un environnement de simulation pour un catamarin en vue de la collecte de déchets marins.
 	
 	Ma mission a consisté à valider le modèle dynamique de Fossen utilisé dans la simulation : il s'agit de vérifier, par une comparaison systématique entre données simulées mesurées et prédictions du modèle, que le comportement du catamarin virtuel est cohérent avec la théorie des véhicules marins. Cette validation est un préalable indispensable au développement ultérieur de lois de guidage point à point, puis de collecte de déchets : un contrôleur ne peut être réglé sereinement que si le modèle sur lequel il s'appuie -- ou, à défaut, le simulateur qui en tient lieu -- reproduit fidèlement la dynamique réelle du véhicule. Une divergence non détectée entre modèle et simulation se traduirait, en aval, par des lois de commande mal dimensionnées et un transfert difficile vers le véhicule réel (problème dit du \emph{sim-to-real gap}).
 	
-	Après une présentation de la structure d'accueil (partie~1), ce rapport détaille le contexte, les méthodes et les résultats du travail effectué (partie~2) : état de l'art, mise en place de l'écosystème ROS~2/VRX, conception d'un protocole d'expériences, développement de la chaîne d'acquisition, mise en équations du modèle de Fossen avec vent et houle, et analyse de la validation. La partie~3 dresse le guidage du catamarin et la partie ~4 serait le bilan du stage et ouvre sur les perspectives.
+	Après une présentation de la structure d'accueil, ce rapport détaille le contexte, les méthodes et les résultats du travail effectué: état de l'art, mise en place de l'écosystème ROS~2/VRX, conception d'un protocole d'expériences, développement de la chaîne d'acquisition, mise en équations du modèle de Fossen avec vent et houle, et analyse de la validation. La partie~3 dresse le guidage du catamarin et la partie ~4 serait le bilan du stage et ouvre sur les perspectives.
 	
 	% =====================================================
 	% PREMIÈRE PARTIE : STRUCTURE D'ACCUEIL
@@ -187,15 +185,15 @@
 	\section{Contexte et objectifs du stage}
 	
 	\subsection{Sujet et missions}
-	Le sujet, intitulé \og Développement d'un environnement de simulation pour drone de surface aquatique (USV)\fg, s'articule autour de quatre axes :
+	Le sujet, intitulé \og Développement d'un environnement de simulation pour drone de surface aquatique (USV) \fg, se concentre principalement sur la modélisation du catamaran et le guidage du drone. Il s'articule autour de quatre axes :
 	\begin{enumerate}
 		\item \textbf{Configuration de l'écosystème} : mise en place sous Linux de ROS~2, Gazebo et RViz2 ;
-		\item \textbf{Intégration et instrumentation} : configuration et calibration virtuelle de la suite sensorielle (caméra RGB, GPS, IMU, LiDAR 3D) du robot ;
-		\item \textbf{Traitement de données} : développement de nœuds ROS~2 d'acquisition et de visualisation;
+		\item \textbf{Intégration et instrumentation} : configuration et calibration virtuelle de la suite sensorielle (GPS, IMU) du robot ;
+		\item \textbf{Traitement de données} : développement de nœuds ROS~2 d'acquisition et de visualisation en python;
 		\item \textbf{Validation et benchmarking} : validation du modèle dynamique de Fossen 3~DOF et évaluation face aux perturbations environnementales.
 		\item \textbf{Guidage du catamaran} : mise en œuvre d’un système de guidage proportionnel permettant au catamaran d’atteindre une cible donnée.
 	\end{enumerate}
-	Ma contribution s'est concentrée sur les axes~3 et~4, avec pour livrables trois outils logiciels (\texttt{guide.py}, \texttt{logger.py}, \texttt{comp.py}) et une analyse de validation du modèle. Le calendrier du stage a suivi approximativement la répartition du diagramme de Gantt~\ref{fig:gantt_stage} : une phase de prise en main de l'écosystème, une phase de conception et de développement logiciel, puis une phase d'expérimentation et d'analyse.
+	Ma contribution s'est concentrée sur les axes~3 et~4, avec pour livrables trois outils logiciels \cite{github} et une analyse de validation du modèle. Le calendrier du stage a suivi approximativement la répartition du diagramme de Gantt~\ref{fig:gantt_stage} : une phase de prise en main de l'écosystème, une phase de conception et de développement logiciel, puis une phase d'expérimentation et d'analyse.
 	
 \begin{figure}[H]
 	\centering
@@ -232,45 +230,12 @@
 	
 	
 	
-	\subsection{État de l'art et bibliographie}
-	\subsubsection{USV et collecte de déchets marins}
-	Le projet ATRON \cite{atron} illustre l'intérêt des USV pour la récupération autonome de déchets en milieu océanique : il motive l'objectif final du laboratoire (collecte de macro-déchets) et le besoin d'un simulateur fiable. Les auteurs y soulignent que la fiabilité de la phase de détection-collecte dépend directement de la précision du positionnement et du contrôle bas niveau du véhicule, ce qui renforce, l'importance de disposer d'un modèle dynamique correctement validé avant d'aborder les couches supérieures de perception et de planification.
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\textwidth]{garbages.png}
-		\caption{Environnement VRX sous Gazebo}
-		\label{fig:dechets}
-	\end{figure}
-	
-	\subsubsection{Simulation maritime : VRX et Gazebo}
-	Bingham et al. \cite{vrx} présentent le framework VRX, qui étend Gazebo à la robotique maritime (modélisation des vagues, du vent et des courants). Saldarriaga-Mesa et al. \cite{vrx2} montrent l'utilisation de VRX comme plateforme ouverte pour la conception de contrôleurs de véhicules de surface, ce qui justifie le choix de cet environnement pour notre étude. Ces deux références confirment un point méthodologique central pour notre travail : VRX repose lui-même sur une implémentation interne du modèle de Fossen pour propager la dynamique du catamaran, si bien que la \og validation\fg{} que nous menons ne compare pas la simulation à un véhicule réel, mais vérifie la cohérence entre les accélérations produites par le moteur physique de Gazebo et celles prédites par notre propre implémentation indépendante des équations de Fossen. Cette distinction, précisée dès l'état de l'art, encadre l'interprétation des résultats de la section~\ref{sec:fossen} et suivantes.
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.9\textwidth]{wave.png}
-		\caption{Environnement sydney regatta sous Gazebo}
-		\label{fig:wave}
-	\end{figure}
-	
-	\subsubsection{RViz2}
-	
-	RViz2 est un outil de visualisation intégré à l'écosystème ROS~2. Il permet de représenter graphiquement les données publiées par les différents nœuds, notamment la position du véhicule, les repères de coordonnées et les données issues des capteurs.
-	
-	Dans notre projet, RViz2 est principalement utilisé pour observer l'état du WAM-V et vérifier le bon fonctionnement de la chaîne de communication pendant les expérimentations.
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.7\textwidth]{Rviz2.png}
-		\caption{Visualisation du système dans RViz2}
-		\label{fig:rviz2}
-	\end{figure}
-	
+	\subsection{Outils et état de l'art}
 	
 	\subsubsection{Middleware ROS~2}
 	Rantala \cite{rantala} expose les principes de conception de systèmes de navigation autonomes fondés sur ROS~2. Il est utilisé comme middleware de communication entre les différents composants du système. L'architecture est organisée autour de plusieurs nœuds, chacun étant chargé d'une fonction particulière, comme l'acquisition des données, le calcul de la commande ou l'enregistrement des résultats.
 	
-	Les échanges de données sont réalisés à travers des topics. Un nœud peut publier des messages à l'aide d'un publisher, tandis qu'un autre nœud peut s'abonner au topic correspondant afin de recevoir ces données. Cette architecture permet de séparer les différentes fonctions du système tout en assurant leur communication.
+	Les échanges de données sont réalisés à travers des topics (par exemple les commandes des propulseurs). Un nœud peut publier des messages à l'aide d'un publisher, tandis qu'un autre nœud peut s'abonner au topic correspondant afin de recevoir ces données. Cette architecture permet de séparer les différentes fonctions du système tout en assurant leur communication.
 	
 	Dans notre configuration, nous utilisons ROS~2 Jazzy sous Ubuntu 24.04 LTS.
 	
@@ -280,107 +245,88 @@
 		\caption{Architecture de communication entre les nœuds ROS~2}
 		\label{fig:nodes}
 	\end{figure}
-
-\subsubsection{Modélisation des véhicules marins}
-
-La dynamique des véhicules de surface est classiquement décrite à l'aide du formalisme de Fossen, largement utilisé pour la modélisation et l'étude des systèmes marins \cite{fossen}. Cette approche permet de représenter les différents mouvements du véhicule ainsi que les forces et moments qui s'exercent sur celui-ci. Elle constitue également une base de référence pour la modélisation des voiliers et autres véhicules marins autonomes \cite{lebars,saoud}.
-
-Dans le cadre de ce travail, le drone catamaran est représenté par un modèle à 3 degrés de liberté (\emph{Degrees of Freedom}, DOF), correspondant aux mouvements de translation longitudinale (\emph{surge}), de translation latérale (\emph{sway}) et de rotation autour de l'axe vertical (\emph{yaw}). Cette représentation est adaptée à un véhicule de surface dont les mouvements sont principalement considérés dans le plan horizontal. La formulation en représentation d'état permet alors de décrire l'évolution temporelle de la position, de l'orientation et des vitesses du véhicule \cite{jaulin_etat}.
-
-Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécessaires à la simulation du drone, notamment les termes liés à la masse et à l'inertie, les forces et moments hydrodynamiques ainsi que les actions générées par les propulseurs. Cette modélisation constitue la base du modèle dynamique utilisé dans l'environnement de simulations.
 	
-	\section{Mise en place de l'environnement de simulation}
+	\subsubsection{Catamaran}
 	
-	\subsection{Chaîne logicielle}
-	L'environnement repose sur Ubuntu~22.04, ROS~2 (Jazzy), Gazebo (Harmonic) et le monde \texttt{sydney\_regatta} de VRX, qui fournit le modèle WAM-V équipé de deux propulseurs différentiels, d'une IMU, d'une caméra RGB et d'un LiDAR 3D. RViz2 assure la visualisation des flux capteurs. Ce choix de version (Jazzy + Harmonic) correspond à la configuration officiellement supportée par le dépôt VRX au moment du stage ; il a été privilégié à des versions plus récentes de ROS~2 afin de limiter les risques d'incompatibilité avec les plugins Gazebo fournis par le projet.
 	
-	\subsection{Architecture de communication}
-	Deux middlewares coexistent : le transport Gazebo (topics de simulation : pose, IMU, commandes de propulseurs) et ROS~2 (topic d'étiquetage \verb|/usv/current_segment|). Le tableau~\ref{tab:topics} résume les flux utilisés. Cette coexistence de deux bus de communication est une contrainte structurante du projet VRX : le moteur physique (Gazebo Transport) et la couche applicative (ROS~2, via \texttt{ros\_gz\_bridge}) ne partagent pas nativement le même espace de nommage, ce qui a nécessité un pont explicite pour certains topics et une vigilance particulière sur la synchronisation temporelle des messages lors de l'enregistrement.
+	
+	\subsubsection{USV et collecte de déchets marins}
+	Le projet ATRON \cite{atron} illustre l'intérêt des USV pour la récupération autonome de déchets en milieu océanique : il motive l'objectif final du laboratoire (collecte de macro-déchets) et le besoin d'un simulateur fiable. Les auteurs y soulignent que la fiabilité de la phase de détection-collecte dépend directement de la précision du positionnement et du contrôle bas niveau du véhicule, ce qui renforce, l'importance de disposer d'un modèle dynamique correctement validé avant d'aborder les couches supérieures de perception et de planification.
+	
+	Les paramètres du drone sont les suivants: 
 	
 	\begin{table}[H]
 		\centering
-		\caption{Principaux topics de la chaîne d'acquisition}
-		\label{tab:topics}
+		\caption{Paramètres du modèle de Fossen 3-DOF}
+		\label{tab:params_wamv}
 		\begin{tabular}{lll}
 			\toprule
-			\textbf{Topic} & \textbf{Middleware} & \textbf{Contenu} \\
+			\textbf{Paramètre} & \textbf{Signification} & \textbf{Valeur} \\
 			\midrule
-			\verb|/world/sydney_regatta/pose/info| & Gazebo & pose mondiale du WAM-V \\
-			\verb|.../imu_wamv_sensor/imu| & Gazebo & accélérations et vitesses angulaires IMU \\
-			\verb|/wamv/thrusters/left/thrust|  & Gazebo & commande propulseur gauche $T_L$ \\
-			\verb|/wamv/thrusters/right/thrust| & Gazebo & commande propulseur droit $T_R$ \\
-			\verb|/usv/current_segment| & ROS~2 & étiquette de l'expérience en cours \\
+			$m$ & masse du WAM-V & [250] kg \\
+			$x_g$ & abscisse du centre de gravité (repère corps) & [0] m \\
+			$I_z$ & moment d'inertie autour de l'axe $z$ & [380] kg\,m$^2$ \\
+			$\ell$ (\texttt{lever\_arm}) & bras de levier des propulseurs & [1.03] m \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
-	
-	\subsection{Difficultés rencontrées}
-	L'installation a nécessité la résolution d'incompatibilités de dépendances (versions de paquets ROS/Gazebo, pilotes graphiques). Le parsing des messages Gazebo au format texte (protobuf) a imposé un analyseur robuste par expressions régulières. Enfin, la calibration extrinsèque caméra/LiDAR reste un point de vigilance pour la suite du projet.
-	
-	Trois catégories de difficultés méritent d'être détaillées, car elles ont représenté une part significative du temps d'ingénierie du stage :
-	\begin{itemize}[label=--]
-		\item \textbf{Dépendances logicielles.} Les versions de \texttt{ros\_gz}, de Gazebo Harmonic et des pilotes graphiques (OpenGL/Vulkan) doivent être strictement cohérentes ; une désynchronisation, même mineure, provoque des échecs silencieux au lancement du monde \texttt{sydney\_regatta} (absence de rendu, capteurs muets) plus difficiles à diagnostiquer qu'une erreur de compilation explicite.
-		\item \textbf{Format des messages.} Certains messages Gazebo, exposés en texte protobuf plutôt qu'en binaire structuré, ont nécessité l'écriture d'un analyseur par expressions régulières suffisamment tolérant pour absorber les variations de mise en forme (espaces, ordre des champs) observées d'une version à l'autre du pont \texttt{ros\_gz\_bridge}.
-		
-	\end{itemize}
-	
-	\section{Protocole expérimental de validation}
-	
-	\subsection{Principe}
-	Valider un modèle dynamique consiste à exciter le système avec des entrées connues, puis à comparer les sorties mesurées aux sorties prédites par le modèle soumis aux mêmes entrées. Nous avons donc conçu un séquenceur d'expériences qui permet de téléopérer le drone par des entrées en boucle ouverte afin de collecter l'ensemble des données capteurs sur ces trajectoires parcourues.. Ce principe d'identification par excitation contrôlée est classique en automatique : il garantit que les grandeurs d'intérêt (surge, sway, yaw et leurs dérivées) sont suffisamment sollicitées sur toute la plage de fonctionnement du véhicule, condition nécessaire pour qu'une comparaison modèle/mesure soit réellement discriminante et ne se limite pas à un régime de fonctionnement particulier.
-	
-	\subsection{Table des expériences}
-	Le tableau~\ref{tab:exp} présente les huit simulations retenues.
-	
-	\begin{table}[H]
-		\centering
-		\caption{Protocole d'expériences excitatrices}
-		\label{tab:exp}
-		\begin{tabular}{lcccl}
-			\toprule
-			\textbf{Expérience} & $T_L$ & $T_R$ & \textbf{Durée}  \\
-			\midrule
-			1 -- Accélération ligne droite & 500 & 500 & 27 s  \\
-			2 -- Roue libre & 0 & 0 & 12 s & amortissement naturel \\
-			3 -- Virage grand rayon & 500 & 625 & 45 s  \\
-			4 -- Virage rayon moyen & 500 & 750 & 45 s \\
-			5 -- Virage petit rayon & 500 & 875 & 45 s\\
-			6 -- Virage opposé & 750 & 500 & 45 s  \\
-			7 -- Ligne droite rapide & 625 & 625 & 20 s  \\
-			8 -- Ligne droite lente & 375 & 375 & 20 s \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
-	
-	Ce protocole est volontairement riche : les lignes droites excitent le surge, les virages excitent le lacet et le couplage coriolis et la roue libre révèle l'amortissement hydrodynamique.
 	
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.7\textwidth]{traj_1.png} 
-		\caption{}
-		\label{fig:trajectoire}
+		\includegraphics[width=0.9\textwidth]{garbages.png}
+		\caption{Environnement VRX sous Gazebo}
+		\label{fig:dechets}
 	\end{figure}
 	
-	\subsection{Justification du choix des consignes}
-	Le choix des couples $(T_L, T_R)$ n'est pas arbitraire : il répond à une logique d'identification progressive. Les expériences~1, 7 et~8 forment une famille de lignes droites à trois amplitudes différentes (nominale, rapide, lente), ce qui permet de vérifier que les termes d'amortissement quadratique $X_{uu}$ (tableau~\ref{sec:parametres}) de l'équation~\eqref{eq:D3dof} sont correctement identifiés sur toute la plage de vitesse, et pas seulement au point de fonctionnement nominal. Les expériences~3 à~5 font croître progressivement l'écart $T_R - T_L$ à poussée moyenne $T_L$ constante, ce qui isole l'effet du terme de lacet $N_{prop}$ (tableau~\ref{sec:parametres}) de l'équation~\eqref{eq:thrust} sans modifier simultanément l'excitation en surge. Enfin, l'expérience~6 inverse le déséquilibre de l'expérience~4 : en toute rigueur, un drone parfaitement symétrique devrait produire des trajectoires en miroir, si bien qu'un écart significatif entre ces deux expériences est un indicateur direct d'asymétrie résiduelle du modèle ou du véhicule simulé (décentrage du centre de gravité $x_g$, dissymétrie des propulseurs).
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{parametre.png}
+		\caption{Les différents composants du drone}
+		\label{fig:capteurs}
+	\end{figure}
 	
-	\subsection{Séquencement et sécurité du scénario}
-	Le séquenceur \texttt{guide.py} publie les consignes à fréquence fixe (20~Hz) et journalise l'étiquette de l'expérience en cours sur le topic \verb|/usv/current_segment|, ce qui permet de segmenter automatiquement l'enregistrement produit par le script de journalisation.
+	\subsubsection{Simulation dynamique maritime : VRX et Gazebo}
+	Bingham et al. \cite{vrx} présentent le framework VRX, qui étend Gazebo à la robotique maritime (modélisation des vagues, du vent et des courants). Saldarriaga-Mesa et al. \cite{vrx2} montrent l'utilisation de VRX comme plateforme ouverte pour la conception de contrôleurs de véhicules de surface, ce qui justifie le choix de cet environnement pour notre étude. Ces deux références confirment un point méthodologique central pour notre travail : VRX repose lui-même sur une implémentation interne du modèle de Fossen pour propager la dynamique du catamaran, si bien que la \og validation\fg{} que nous menons ne compare pas la simulation à un véhicule réel, mais vérifie la cohérence entre les accélérations produites par les capteurs embarqués sur le drone et celles prédites par notre propre implémentation indépendante des équations de Fossen.
 	
-	\section{Chaîne d'acquisition des données}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{wave.png}
+		\caption{Environnement Sydney Regatta sous Gazebo, avec des vagues simulées permettant d'évaluer la flottabilité du drone}
+		\label{fig:wave}
+	\end{figure}
 	
-	\subsection{Grandeurs enregistrées}
-	L'enregistreur fusionne quatre flux asynchrones dans un enregistrement : pose (position, quaternion, cap), vitesses et accélérations corps estimées par différenciation filtrée (Annexe ~\ref{app:mesures}), mesures IMU brutes, commandes propulseurs et étiquette d'expérience. Le repère local est verrouillé sur la première pose reçue, ce qui fournit directement une trajectoire centrée en $(0,0)$.
+	\subsubsection{RViz2}
 	
-	\subsection{Estimation des vitesses corps}
-	Les vitesses monde sont obtenues par différenciation de la pose, puis projetées dans le repère corps à l'aide du quaternion d'attitude ; les vitesses angulaires $(p,q,r)$ sont déduites de la variation de quaternion (Annexe ~\ref{app:mesures}). Un filtre passe-bas du premier ordre ($\alpha_v = 0{,}35$) limite le bruit de différenciation, et un second étage ($\alpha_a = 0{,}25$) produit $\dot u, \dot v, \dot r$.
+	RViz2 est un outil de visualisation intégré à l'écosystème ROS~2. Il permet de représenter graphiquement les données publiées par les différents nœuds, notamment la position du véhicule, les repères de coordonnées et les données issues des capteurs.
+	
+	Dans notre projet, RViz2 est principalement utilisé pour observer l'état du WAM-V et vérifier le bon fonctionnement de la chaîne de communication pendant les expérimentations et la visualisation données capteurs.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{Rviz2.png}
+		\caption{Visualisation du système dans RViz2}
+		\label{fig:rviz2}
+	\end{figure}
+	
+	
+	
+
+\subsubsection{Modélisation des véhicules marins}
+
+La dynamique des véhicules de surface est classiquement décrite à l'aide du formalisme de Fossen, largement utilisé pour la modélisation et l'étude des systèmes marins \cite{fossen}. Cette approche permet de représenter les différents mouvements du véhicule ainsi que les forces et moments (aérodynamiques et hydrodynamiques) qui s'exercent sur celui-ci. Elle constitue également une base de référence pour la modélisation des voiliers et autres véhicules marins autonomes \cite{lebars,saoud}.
+
+Dans le cadre de ce travail, le drone catamaran (~\ref{fig:dechets}) est représenté par un modèle à 3 degrés de liberté, correspondant aux mouvements de translation longitudinale (\emph{surge}), de translation latérale (\emph{sway}) et de rotation autour de l'axe vertical (\emph{yaw}). Cette représentation est adaptée à un véhicule de surface dont les mouvements sont principalement considérés dans le plan horizontal. La formulation en représentation d'état permet alors de décrire l'évolution temporelle de la position, de l'orientation et des vitesses du véhicule \cite{jaulin_etat}.
+
+Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécessaires à la simulation du drone, notamment les termes liés à la masse et à l'inertie, les forces et moments hydrodynamiques ainsi que les actions générées par les propulseurs. Cette modélisation constitue la base du modèle dynamique utilisé dans l'environnement de simulations.
+	
+
 	
 
 	
 	% =====================================================
 	% SECTION : REPRÉSENTATION DU MODÈLE DE FOSSEN
 	% =====================================================
-	\section{Représentation du modèle de Fossen}
+	\section{Représentation du modèle de Fossen: Pour un catamaran}
 	\label{sec:fossen}
 	
 	Le comportement dynamique du drone est décrit par le formalisme matriciel de Fossen, aujourd'hui
@@ -388,22 +334,12 @@ Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécess
 	rappelle la construction, depuis la formulation générale à six degrés de liberté jusqu'à la
 	réduction à trois degrés utilisée dans notre travail.
 	
-	\subsection{Contexte historique et motivation}
-	
-	Le modèle de Fossen fournit un cadre mathématique permettant d'exprimer les équations du mouvement
-	non linéaires d'un véhicule marin sous une forme matrice--vecteur compacte. Cette formulation,
-	introduite pour la première fois dans sa thèse de doctorat de 1991, offre une
-	alternative plus efficace aux modèles hydrodynamiques classiques, lesquels étaient auparavant exprimés
-	sous forme de composantes scalaires. Ces modèles antérieurs comportaient souvent des centaines de
-	termes individuels, ce qui rendait difficile l'exploitation de propriétés intrinsèques du système
-	telles que la passivité, la symétrie et la conservation de l'énergie. L'approche de Fossen est devenue un modèle fondamental en hydrodynamique marine et en
+	L'approche de Fossen est devenue un modèle fondamental en hydrodynamique marine et en
 	contrôle du mouvement, largement adopté dans la recherche académique et les applications
 	industrielles.
 	
 	Cette représentation matricielle est particulièrement précieuse pour la conception des systèmes de
-	guidage, de navigation et de contrôle. Elle s'applique à un large éventail de structures
-	marines : navires, structures flottantes offshore, sous-marins, véhicules sous-marins autonomes
-	et drones de surface autonomes.
+	guidage, de navigation et de contrôle
 	
 	\subsection{Formulation générale en six degrés de liberté}
 	
@@ -435,9 +371,9 @@ Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécess
 			\textbf{Axe} & \textbf{Position} & \textbf{Angle} & \textbf{Vitesse linéaire}
 			& \textbf{Vitesse angulaire} \\
 			\midrule
-			$x$ & $x$ & $\phi$ (roulis) & $u$ & $p$ \\
-			$y$ & $y$ & $\theta$ (tangage) & $v$ & $q$ \\
-			$z$ & $z$ & $\psi$ (lacet) & $w$ & $r$ \\
+			$X$ & $x$ & $\phi$ (roulis) & $u$ & $p$ \\
+			$Y$ & $y$ & $\theta$ (tangage) & $v$ & $q$ \\
+			$Z$ & $z$ & $\psi$ (lacet) & $w$ & $r$ \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
@@ -465,7 +401,7 @@ Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécess
 	
 	\subsubsection{Cinématique}
 	
-	L'équation cinématique~\eqref{eq:cinematique} utilise les angles d'Euler pour décrire la transformation du repère corps vers le repère NED. Les rotations
+	L'équation cinématique~\eqref{eq} utilise les angles d'Euler pour décrire la transformation entre le repère lié au véhicule et un repère de navigation fixe, défini localement par rapport à la Terre. Les rotations
 	séquentielles s'effectuent dans l'ordre lacet ($z$), tangage ($y$), roulis ($x$). La matrice de
 	transformation est :
 	\begin{equation}
@@ -480,14 +416,14 @@ Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécess
 	$\boldsymbol{T}(\boldsymbol{\Theta})$ la matrice de transformation des vitesses angulaires, avec
 	$\boldsymbol{\Theta} = [\phi, \theta, \psi]^\top$. Pour le drone, dont les mouvements de roulis et de
 	tangage restent faibles en régime de navigation nominal, cette transformation se réduit en pratique à
-	une simple rotation planaire d'angle $\psi$ entre repère corps et repère NED, ce qui justifie a
+	une simple rotation planaire d'angle $\psi$ entre repère corps et repère fixe, ce qui justifie a
 	posteriori la réduction au modèle 3-DOF présentée en section~\ref{sec:3dof}.
 	
 	\subsection{Paramètres hydrodynamiques du modèle}
 	\label{sec:parametres}
 	
 	Le tableau~\ref{tab:params} liste les paramètres du modèle 3-DOF. Ces coefficients (masse, position du centre de gravité, moment
-	d'inertie) provient directement de la description URDF/SDF (ce sont des fichiers permettent de décrire la structure et les propriétés physiques du véhicule, ses liens, articulations et capteurs) du catamaran et du fichier de description de l'environement sydney regatta.
+	d'inertie) provient directement de la description URDF/SDF (ce sont des fichiers permettent de décrire la structure et les propriétés physiques du véhicule, ses liens, articulations, capteurs et l'ajustement des coefficients aerodynamiques et hydrodynamiques de l'environement) du catamaran et du fichier de description de l'environement sydney regatta.
 	
 	\begin{table}[H]
 		\centering
@@ -497,15 +433,11 @@ Le modèle retenu prend ainsi en compte les principaux effets dynamiques nécess
 			\toprule
 			\textbf{Paramètre} & \textbf{Signification} & \textbf{Valeur} \\
 			\midrule
-			$m$ & masse du WAM-V & [250] kg \\
-			$x_g$ & abscisse du centre de gravité (repère corps) & [0] m \\
-			$I_z$ & moment d'inertie autour de l'axe $z$ & [380] kg\,m$^2$ \\
 			$X_{\dot u}, Y_{\dot v}, Y_{\dot r}, N_{\dot v}, N_{\dot r}$ & masses ajoutées & [-100, -80, - 60, 0, 0] \\
 			$X_u, X_{uu}$ & amortissement linéaire/quadratique en surge & [-50, -180] \\
 			$Y_v, Y_{vv}$ & amortissement linéaire/quadratique en sway & [-80, -200] \\
 			$N_r, N_{rr}$ & amortissement linéaire/quadratique en yaw & [-100 ,-300] \\
 			$k$ (\texttt{thrust\_scale}) & conversion consigne $\rightarrow$ poussée & [1] N/unité \\
-			$\ell$ (\texttt{lever\_arm}) & bras de levier des propulseurs & [2.03] m \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
@@ -529,7 +461,7 @@ où $\boldsymbol{D}_{L}$ représente les résistances qui varient de manière ap
 
 	
 	
-	\subsection{Équations du mouvement relatif et forces environnementales}
+	\subsection{Équations du mouvement et forces environnementales}
 	
 	Les forces environnementales sont intégrées à l'aide de la vitesse relative pour les courants
 	océaniques, tandis que les efforts de vent et des vagues sont ajoutés par superposition linéaire. La
@@ -537,8 +469,8 @@ où $\boldsymbol{D}_{L}$ représente les résistances qui varient de manière ap
 	de vitesse $\boldsymbol{\nu}_c$ : l'interaction du véhicule avec le fluide environnant dépend en effet
 	de la vitesse relative par rapport à l'eau. Le modèle devient :
 	\begin{equation}
-		\boldsymbol{M}\,\dot{\boldsymbol{\nu}} + \boldsymbol{C}(\boldsymbol{\nu}_r)\,\boldsymbol{\nu}_r
-		+ \boldsymbol{D}(\boldsymbol{\nu}_r)\,\boldsymbol{\nu}_r + \boldsymbol{g}(\boldsymbol{\eta})
+		\boldsymbol{M}\,\dot{\boldsymbol{\nu}} + \boldsymbol{C}(\boldsymbol{\nu})\,\boldsymbol{\nu}
+		+ \boldsymbol{D}(\boldsymbol{\nu})\,\boldsymbol{\nu} + \boldsymbol{g}(\boldsymbol{\eta})
 		= \boldsymbol{\tau}_{prop} + \boldsymbol{\tau}_{vent} + \boldsymbol{\tau}_{vagues}
 		\label{eq:relatif}
 	\end{equation}
@@ -549,11 +481,7 @@ où $\boldsymbol{D}_{L}$ représente les résistances qui varient de manière ap
 		\item $\boldsymbol{\tau}_{vague}$ : forces induites par les vagues.
 	\end{itemize}
 	
-	Pour un courant océanique irrotationnel, le champ de vitesse est sans rotationnel, ce qui conduit à une
-	description en écoulement potentiel : la vitesse du courant $\boldsymbol{\nu}_c$ reste spatialement
-	uniforme et constante (ou quasi constante) dans le repère NED. La résolution numérique procède alors
-	par intégration de l'équation différentielle portant sur la vitesse absolue. Dans le cadre de nos
-	campagnes d'expériences, le monde \texttt{sydney\_regatta} n'imposait pas de courant marin actif ; le terme
+	Dans le cadre de nos campagnes d'expériences, le monde \texttt{sydney\_regatta} n'imposait pas de courant marin actif ; le terme
 	$\boldsymbol{\nu}_c$ a donc été fixé à zéro, mais l'implémentation conserve
 	l'architecture nécessaire à son activation future, ce qui facilitera l'extension du protocole à des
 	scénarios avec courant.
@@ -567,12 +495,9 @@ Dans le cas d'un véhicule de surface évoluant principalement dans le plan hori
 
 Cette réduction repose sur les hypothèses suivantes :
 \begin{itemize}
-	\item le véhicule reste à la surface de l'eau et sa position verticale est supposée constante ;
-	\item les mouvements de \emph{heave} (translation verticale) sont négligés ;
-	\item les mouvements de \emph{roll} (roulis) et de \emph{pitch} (tangage) sont supposés faibles devant les mouvements horizontaux et sont donc négligés ;
-	\item les variations de l'assiette du véhicule restent suffisamment faibles pour considérer que sa dynamique est principalement décrite dans le plan horizontal ;
-	\item le véhicule est supposé présenter une symétrie approximative bâbord--tribord, ce qui permet de négliger certains termes de couplage ;
-	\item les effets de flottabilité et de gravité associés aux mouvements verticaux et angulaires sont donc négligés dans le modèle retenu.
+	\item \textbf{H1 :} le véhicule reste à la surface de l'eau, sa position verticale est supposée constante et les mouvements de \emph{heave} sont donc négligés ;
+	\item \textbf{H2 :} les mouvements de \emph{roll} (roulis) et de \emph{pitch} (tangage) sont supposés faibles devant les mouvements horizontaux et sont donc négligés ;
+	\item \textbf{H3 :} les effets de couplage liés aux mouvements négligés sont supposés suffisamment faibles pour être ignorés dans le modèle retenu.
 \end{itemize}
 
 Sous ces hypothèses, seuls les mouvements de \emph{surge}, \emph{sway} et \emph{yaw} sont conservés. Le vecteur des vitesses devient alors
@@ -597,41 +522,41 @@ Les forces de rappel $\boldsymbol{g}(\boldsymbol{\eta})$, principalement associ�
 
 où $\boldsymbol{M}$ représente les effets d'inertie et de masse ajoutée, $\boldsymbol{C}(\boldsymbol{\nu})$ les effets liés aux changements de mouvement, $\boldsymbol{D}(\boldsymbol{\nu})$ les forces de résistance de l'eau et $\boldsymbol{\tau}$ les forces et moments appliqués au véhicule.
 
-Les matrices du modèle 3-DOF, telles qu'implémentées dans \texttt{comp1.py}, prennent la forme suivante :
+Les matrices du modèle 3-DOF prennent la forme suivante :
 
-\paragraph{Matrice d'inertie $\boldsymbol{M}$.}
-Elle regroupe la masse du véhicule et les effets de masse ajoutée de l'eau :
-\begin{equation}
-	\boldsymbol{M} = \begin{bmatrix}
-		m - X_{\dot u} & 0 & 0 \\
-		0 & m - Y_{\dot v} & m x_g - Y_{\dot r} \\
-		0 & m x_g - N_{\dot v} & I_z - N_{\dot r}
-	\end{bmatrix}
-	\label{eq:M3dof}
-\end{equation}
+\begin{itemize}
+	\item Matrice d'inertie $\boldsymbol{M}$: elle regroupe la masse du véhicule et les effets de masse ajoutée de l'eau :
+	\begin{equation}
+		\boldsymbol{M} = \begin{bmatrix}
+			m - X_{\dot u} & 0 & 0 \\
+			0 & m - Y_{\dot v} & m x_g - Y_{\dot r} \\
+			0 & m x_g - N_{\dot v} & I_z - N_{\dot r}
+		\end{bmatrix}
+		\label{eq:M3dof}
+	\end{equation}
+	
+	\item Matrice de Coriolis $\boldsymbol{C}(\boldsymbol{\nu})$: elle représente les effets liés au couplage entre les différents mouvements du véhicule :
+	\begin{equation}
+		\boldsymbol{C}(\boldsymbol{\nu}) = \begin{bmatrix}
+			0 & 0 & -(m - Y_{\dot v}),v - (m x_g - Y_{\dot r}),r \\
+			0 & 0 & (m - X_{\dot u}),u \\
+			(m - Y_{\dot v}),v + (m x_g - Y_{\dot r}),r & -(m - X_{\dot u}),u & 0
+		\end{bmatrix}
+		\label{eq:C3dof}
+	\end{equation}
+	
+	\item Matrice d'amortissement $\boldsymbol{D}(\boldsymbol{\nu})$: elle représente les forces de résistance exercées par l'eau sur le véhicule. Les dérivées hydrodynamiques étant négatives, elle est définie par :
+	\begin{equation}
+		\boldsymbol{D}(\boldsymbol{\nu}) =
+		-\begin{bmatrix}
+			X_u + X_{uu}|u| & 0 & 0 \\
+			0 & Y_v + Y_{vv}|v| & 0 \\
+			0 & 0 & N_r + N_{rr}|r|
+		\end{bmatrix}
+		\label{eq:D3dof}
+	\end{equation}
+\end{itemize}
 
-\paragraph{Matrice de Coriolis--centripète $\boldsymbol{C}(\boldsymbol{\nu})$.}
-Elle représente les effets liés au couplage entre les différents mouvements du véhicule :
-\begin{equation}
-	\boldsymbol{C}(\boldsymbol{\nu}) = \begin{bmatrix}
-		0 & 0 & -(m - Y_{\dot v}),v - (m x_g - Y_{\dot r}),r \\
-		0 & 0 & (m - X_{\dot u}),u \\
-		(m - Y_{\dot v}),v + (m x_g - Y_{\dot r}),r & -(m - X_{\dot u}),u & 0
-	\end{bmatrix}
-	\label{eq:C3dof}
-\end{equation}
-
-\paragraph{Matrice d'amortissement $\boldsymbol{D}(\boldsymbol{\nu})$.}
-Elle représente les forces de résistance exercées par l'eau sur le véhicule. Les dérivées hydrodynamiques étant négatives, elle est définie par :
-\begin{equation}
-	\boldsymbol{D}(\boldsymbol{\nu}) =
-	-\begin{bmatrix}
-		X_u + X_{uu}|u| & 0 & 0 \\
-		0 & Y_v + Y_{vv}|v| & 0 \\
-		0 & 0 & N_r + N_{rr}|r|
-	\end{bmatrix}
-	\label{eq:D3dof}
-\end{equation}
 
 La résolution du modèle consiste alors à déterminer l'accélération du véhicule à partir des forces et moments qui lui sont appliqués :
 \begin{equation}
@@ -652,9 +577,9 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	
 	
 	
-	\subsection{Torseur de propulsion par poussée différentielle}
+	\subsection{Torseur de propulsion}
 	
-	Les deux propulseurs fixes du WAM-V, alignés avec l'axe $x$ du repère corps et séparés par un bras de
+	Les deux propulseurs fixes du drone, alignés avec l'axe $x$ du repère corps et séparés par un bras de
 	levier $2\ell$, produisent une poussée différentielle. Le torseur de propulsion s'écrit :
 	\begin{equation}
 		X_{prop} = k\,(T_L + T_R), \qquad Y_{prop} = 0, \qquad N_{prop} = k\,\ell\,(T_R - T_L)
@@ -670,7 +595,7 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	
 	Le vent est modélisé par une loi quadratique en vitesse relative, conformément au modèle VRX
 	\cite{vrx}. En notant $V_w$ la vitesse du vent, $\beta$ sa direction et $\psi$ le cap du véhicule, on
-	définit les composantes du vent dans le repère corps :
+	définit les composantes du vent dans le repère corps:
 	\begin{equation}
 		u_w = V_w \cos(\beta - \psi), \qquad v_w = V_w \sin(\beta - \psi)
 	\end{equation}
@@ -709,125 +634,109 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	\texttt{sydney\_regatta}, où une unique période pic $T_p$ domine l'excitation.
 	
 	
-	\newpage
+
 	
 	\section{Validation}
 	
-	\subsection{Méthode}
-	Pour chaque instant de l'enregistrement, le torseur total $\tau = \tau_{prop} + \tau_{vent} + \tau_{vague}$ est reconstruit, puis calcule l'accélération $\dot\nu = M^{-1}(\tau - C\nu - D\nu)$. Trois courbes sont superposées par axe (surge, sway, yaw) : mesure IMU, dérivée cinématique et résultat de Fossen (figure~\ref{fig:comp}).
+		\subsection{Mise en place de l'environnement de simulation}
 	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=\textwidth]{fossen_comparison.png} % TODO : votre PNG généré
-		\caption{Comparaison des accélérations mesurées et prédites par le modèle de Fossen (vent + houle). Les traits verticaux séparent les expériences.}
-		\label{fig:comp}
-	\end{figure}
+	\subsubsection{Chaîne logicielle}
+	L'environnement repose sur Ubuntu~22.04, ROS~2 (Jazzy), Gazebo (Harmonic) et le monde \texttt{sydney\_regatta} (voir figure~\ref{fig:wave}) de VRX, qui fournit le modèle drone équipé de deux propulseurs différentiels, d'une IMU, d'une caméra RGB et d'un LiDAR 3D. RViz2 assure la visualisation des flux capteurs. Ce choix de version (Jazzy + Harmonic) correspond à la configuration officiellement supportée par le dépôt VRX au moment du stage ; il a été privilégié à des versions plus récentes de ROS~2 afin de limiter les risques d'incompatibilité avec les plugins Gazebo fournis par le projet.
 	
-\subsection{Métriques de validation}
-\label{subsec:metriques}
-
-La lecture visuelle des courbes de la figure~\ref{fig:comp} est complétée par
-quatre indicateurs quantitatifs, évalués sur $N$ échantillons entre un signal
-mesuré $y^{\mathrm{mes}}$ (accélération, vitesse ou position selon le cas) et
-le signal prédit $y^{\mathrm{exp}}$, avec l'erreur $e_i = y^{\mathrm{mes}}_i -
-y^{\mathrm{exp}}_i$ :
-
-\begin{equation}
-	\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} e_i^{2}}
-	\label{eq:rmse}
-\end{equation}
-
-\begin{equation}
-	\mathrm{MAE} = \frac{1}{N}\sum_{i=1}^{N} |e_i|
-	\label{eq:mae}
-\end{equation}
-
-Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
-	
-	\subsection{Résultats}
-	
-	\subsubsection{Expérience n°1}
-	\label{sec:exp_1}
-	
-	\paragraph{Paramètres de l'éprérience.}
-	Le jeu de paramètres initial (tableau~\ref{tab:params_exp_1}) reprend des valeurs
-	hydrodynamiques raisonnables pour le WAM-V, avec $k = 1$ et $\ell = 1$~m : les consignes de
-	propulsion y sont donc interprétées directement comme des newtons et des newtons-mètres.
+	\subsubsection{Architecture de communication}
+	Deux middlewares coexistent : le transport Gazebo (topics de simulation : pose (position à partir du GPS), IMU, commandes de propulseurs) et ROS~2 (topic d'étiquetage \verb|/usv/current_segment|). Le tableau~\ref{tab:topics} résume les flux utilisés. Cette coexistence de deux bus de communication est une contrainte structurante du projet VRX : le moteur physique (Gazebo Transport) et la couche applicative (ROS~2, via \texttt{ros\_gz\_bridge}) ne partagent pas nativement le même espace de nommage, ce qui a nécessité un pont explicite pour certains topics et une vigilance particulière sur la synchronisation temporelle des messages lors de l'enregistrement.
 	
 	\begin{table}[H]
 		\centering
-		\caption{Expérience 1 -- jeu de paramètres initial}
-		\label{tab:params_exp_1}
-		\begin{tabular}{ll}
+		\caption{Principaux topics de la chaîne d'acquisition}
+		\label{tab:topics}
+		\begin{tabular}{lll}
 			\toprule
-			\textbf{Groupe} & \textbf{Valeurs} \\
+			\textbf{Topic} & \textbf{Middleware} & \textbf{Contenu} \\
 			\midrule
-			Inertie & $m = 250$~kg, $I_z = 380$~kg·m², $x_g = 0$ \\
-			Masse ajoutée & $X_{\dot u} = -100$, $Y_{\dot v} = -80$, $N_{\dot r} = -60$ \\
-			Amortissement & $X_u = -50$, $X_{uu} = -180$, $Y_v = -80$, $Y_{vv} = -200$,
-			$N_r = -100$, $N_{rr} = -300$ \\
-			Propulsion & $k = 1,0$ ; $\ell = 1,0$~m \\
-			Vent & $V_w = 5$~m/s, direction $20^\circ$, $(c_x, c_y, c_n) = (0,5;\,0,5;\,0,33)$ \\
-			Houle & $T_p = 10$~s, dérive $X = 20$~N, amplitudes $60/60/30$, phases $0$\footnotemark \\
-			\bottomrule
-		\end{tabular}
-	\end{table}
-	\footnotetext{À vérifier : dans ce run, la décomposition journalisée du torseur
-		(\texttt{fossen\_errors.csv}) indique des forces de houle nulles ; l'excitation
-		environnementale effective se réduit donc au vent moyen.}
-	
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.8\textwidth]{comparison_essai1.png}
-		\caption{Expérience 1 -- accélérations mesurées (IMU, cinématique) et prédites par le modèle.
-			Les traits verticaux délimitent les expériences.}
-		\label{fig:exp_1}
-	\end{figure}
-	
-	\paragraph{Indicateurs globaux.}
-	Le tableau~\ref{tab:stats_exp_1} résume les statistiques de l'erreur de prédiction sur les
-	$N = 8497$ échantillons.
-	
-	\begin{table}[H]
-		\centering
-		\caption{Epérience n°1}
-		\label{tab:stats_exp_1}
-		\begin{tabular}{lcccccc}
-			\toprule
-			\textbf{Comparaison} & \textbf{Biais} & \textbf{Écart-type} & \textbf{RMSE}
-			& \textbf{MAE}\\
-			\midrule
-			
-			$\dot r$ : Fossen $-$ cinématique
-			& $+0,184$ & $0,280$ & $0,335$ & $0,265$ \\
-			
-			$a_x$ : Fossen $-$ IMU
-			& $+0,775$ & $1,826$ & $1,984$ & $1,228$\\
-			
-			$a_y$ : Fossen $-$ IMU
-			& $+0,004$ & $0,602$ & $0,602$ & $0,490$\\
-			
+			\verb|/world/sydney_regatta/pose/info| & Gazebo & la position dans le repère monde \\
+			\verb|.../imu_wamv_sensor/imu| & Gazebo & accélérations et vitesses angulaires IMU \\
+			\verb|/wamv/thrusters/left/thrust|  & Gazebo & commande propulseur gauche $T_L$ \\
+			\verb|/wamv/thrusters/right/thrust| & Gazebo & commande propulseur droit $T_R$ \\
+			\verb|/usv/current_segment| & ROS~2 & étiquette de l'expérience en cours \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
 	
-	\paragraph{Observations et interprétation}
-	L'analyse conjointe des métriques d'erreur et des séries temporelles montre que le comportement du VRX valide la structure algébrique du modèle de Fossen en 3~DOF, tout en révélant des écarts paramétriques et dynamiques ciblés. En surge ($a_x$ : biais $+0{,}775$~m/s², RMSE $1{,}984$~m/s², MAE $1{,}228$~m/s², écart-type $1{,}826$~m/s²), l'erreur se concentre au début des $8$~segments lors des échelons de poussée : le modèle théorique réagit instantanément ($3{,}6$~m/s² au segment~1 ; $4{,}5$~m/s² au segment~7), alors que la réponse mesurée par l'IMU du VRX présente un retard de $1$ à $2$~s lié à la dynamique propre des propulseurs dans Gazebo. En régime permanent, l'accord est en revanche excellent ($u \approx 2{,}2$~m/s calculé contre $2{,}4$--$2{,}6$~m/s mesuré), confirmant que l'amortissement longitudinal ($X_u, X_{uu}$) décrit fidèlement la réalité du VRX. En sway ($a_y$ : biais $+0{,}004$~m/s², RMSE $0{,}602$~m/s², MAE $0{,}490$~m/s², écart-type $0{,}602$~m/s²), le biais global est nul mais le modèle surestime l'accélération latérale ($\pm 0{,}5$ à $1{,}0$~m/s²) durant les virages (segments~3 à 6) ; cet écart traduit un effet de la réduction 6~DOF$\rightarrow$3~DOF, où l'énergie du terme de Coriolis $280\,u\,r$ est intégralement projetée sur le plan au lieu de se dissiper en roulis et pilonnement comme le fait le VRX dans le simulateur. Enfin, en yaw ($\dot r$ : biais $+0{,}184$~rad/s², RMSE $0{,}335$~rad/s², MAE $0{,}265$~rad/s², écart-type $0{,}280$~rad/s²), le VRX suit la polarité du modèle (inversion de signe fidèlement reproduite entre les segments~5 et 6), mais le modèle surestime nettement la réactivité en rotation avec un taux de lacet théorique ($0{,}75$~rad/s au segment~4) environ $4$~fois supérieur au $r \approx 0{,}2$~rad/s mesuré, ce me prouve que l'amortissement hydrodynamique réel de la coque ($N_r, N_{rr}$) est sous-évalué dans ce jeu de paramètres initial.
+	\subsubsection{Difficultés rencontrées}
+	L'installation a nécessité la résolution d'incompatibilités de dépendances (versions de paquets ROS/Gazebo, pilotes graphiques). Le parsing des messages Gazebo au format texte (protobuf) a imposé un analyseur robuste par expressions régulières.
 	
-	\paragraph{Conclusion sur la validité du modèle}
+	Trois catégories de difficultés méritent d'être détaillées, car elles ont représenté une part significative du temps d'ingénierie du stage :
+	\begin{itemize}[label=--]
+		\item \textbf{Dépendances logicielles.} Les versions de \texttt{ros\_gz}, de Gazebo Harmonic et des pilotes graphiques (OpenGL/Vulkan) doivent être strictement cohérentes ; une désynchronisation, même mineure, provoque des échecs silencieux au lancement du monde \texttt{sydney\_regatta} (absence de rendu, capteurs muets) plus difficiles à diagnostiquer qu'une erreur de compilation explicite.
+		\item \textbf{Format des messages.} Certains messages Gazebo, exposés en texte protobuf plutôt qu'en binaire structuré, ont nécessité l'écriture d'un analyseur par expressions régulières suffisamment tolérant pour absorber les variations de mise en forme (espaces, ordre des champs) observées d'une version à l'autre du pont \texttt{ros\_gz\_bridge}.
+		
+	\end{itemize}
 	
-	Le comportement du VRX valide la structure théorique du modèle de Fossen en 3~DOF : les équations décrivent correctement les vitesses d'équilibre en ligne droite, la nature des couplages de Coriolis ainsi que la directionnalité et la polarité des couples de rotation. Néanmoins, sa validité quantitative reste partielle sous sa forme idéale actuelle ($\text{RMSE} = 1{,}984$~m/s² en surge et $0{,}335$~rad/s² en yaw). Ces divergences ne remettent pas en cause la formulation mathématique de base, mais soulignent ses limites d'application face à trois facteurs critiques : (i)~les simplifications inhérentes à la réduction 3~DOF (omission des degrés de liberté hors-plan comme le roulis ou le pilonnement et négligence des couplages associés) et (ii)~le caractère stochastique et aléatoire de l'environnement physique sous VRX/Gazebo (bruits de mesure capteurs, variations aléatoires du vent et de la houle).
+	\subsection{Protocole expérimental de validation}
 	
-	\subsubsection{Expérience n°2}
+	Valider le modèle dynamique consiste à exciter le système avec des entrées connues, puis à comparer les sorties mesurées aux sorties prédites par le modèle soumis aux mêmes entrées. Nous avons donc conçu un séquenceur d'expériences qui permet de téléopérer le drone par des entrées en boucle ouverte afin de collecter l'ensemble des données capteurs sur ces trajectoires parcourues.. Ce principe d'identification par excitation contrôlée est classique en automatique : il garantit que les grandeurs d'intérêt (surge, sway, yaw et leurs dérivées) sont suffisamment sollicitées sur toute la plage de fonctionnement du véhicule, condition nécessaire pour qu'une comparaison modèle/mesure soit réellement discriminante et ne se limite pas à un régime de fonctionnement particulier.
+	
+	
+	Le tableau~\ref{tab:exp} présente les huit simulations retenues.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.7\textwidth]{traj_1.png} 
+		\caption{Trajectoire suivie par le drone pour exciter sa dynamique et valider le modèle}
+		\label{fig:trajectoire}
+	\end{figure}
+	
+	\begin{table}[H]
+		\centering
+		\caption{Protocole d'expériences excitatrices}
+		\label{tab:exp}
+		\begin{tabular}{lcccl}
+			\toprule
+			\textbf{Expérience} & $T_L$ & $T_R$ & \textbf{Durée}  \\
+			\midrule
+			1 -- Accélération ligne droite & 500 & 500 & 27 s  \\
+			2 -- Roue libre & 0 & 0 & 12 s & amortissement naturel \\
+			3 -- Virage grand rayon & 500 & 625 & 45 s  \\
+			4 -- Virage rayon moyen & 500 & 750 & 45 s \\
+			5 -- Virage petit rayon & 500 & 875 & 45 s\\
+			6 -- Virage opposé & 750 & 500 & 45 s  \\
+			7 -- Ligne droite rapide & 625 & 625 & 20 s  \\
+			8 -- Ligne droite lente & 375 & 375 & 20 s \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	Le choix des couples $(T_L, T_R)$ n'est pas arbitraire : il répond à une logique d'identification progressive. Les expériences~1, 7 et~8 forment une famille de lignes droites à trois amplitudes différentes (nominale, rapide, lente), ce qui permet de vérifier que les termes d'amortissement quadratique $X_{uu}$ (tableau~\ref{sec:parametres}) de l'équation~\eqref{eq:D3dof} sont correctement identifiés sur toute la plage de vitesse, et pas seulement au point de fonctionnement nominal. Les expériences~3 à~5 font croître progressivement l'écart $T_R - T_L$ à poussée moyenne $T_L$ constante, ce qui isole l'effet du terme de lacet $N_{prop}$ (tableau~\ref{sec:parametres}) de l'équation~\eqref{eq:thrust} sans modifier simultanément l'excitation en surge. Enfin, l'expérience~6 inverse le déséquilibre de l'expérience~4 : en toute rigueur, un drone parfaitement symétrique devrait produire des trajectoires en miroir, si bien qu'un écart significatif entre ces deux expériences est un indicateur direct d'asymétrie résiduelle du modèle ou du véhicule simulé (décentrage du centre de gravité $x_g$, dissymétrie des propulseurs).
+	
+	
+	\subsection{Grandeurs enregistrées et estimation des vitesses}
+	
+	L'enregistreur regroupe plusieurs flux asynchrones au sein d'un même enregistrement : la pose du drone (position, quaternion d'attitude et cap), les vitesses et accélérations dans le repère corps, les mesures brutes de l'IMU, les commandes des propulseurs ainsi que l'étiquette de l'expérience. Les vitesses linéaires dans le repère monde sont obtenues par différenciation de la pose, puis projetées dans le repère corps à l'aide du quaternion d'attitude. Les vitesses angulaires sont quant à elles déterminées à partir de la variation du quaternion. Les accélérations sont ensuite obtenues à partir de la variation des vitesses.
+	
+	\subsection{Validation n°1}
 	\label{sec:exp_2}
+	Pour chaque instant de l'enregistrement, le couple total $\tau = \tau_{prop} + \tau_{vent} + \tau_{vague}$ est reconstruit, puis calcule l'accélération $\dot\nu = M^{-1}(\tau - C\nu - D\nu)$. Trois courbes sont superposées par axe (surge, sway, yaw) : mesure IMU, dérivée cinématique et résultat de Fossen.
 	
-	\paragraph{Paramètres de l'éxpérience.}
-	L'objectif est double : tester l'influence
-	de l'inertie sur le pic d'accélération initial en surge, et isoler la structure hydrodynamique du
-	modèle en supprimant les forçages environnementaux.
+	
+	La lecture visuelle des courbes est complétée par
+	quatre indicateurs, l'erreur $e_i = y^{\mathrm{mes}}_i -
+	y^{\mathrm{exp}}_i$ où $y^{\mathrm{mes}}$ est le signal mesuré et $y^{\mathrm{exp}}$ est le signal prédit:
+	
+	\begin{equation}
+		\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N} e_i^{2}}
+		\label{eq:rmse}
+	\end{equation}
+	
+	\begin{equation}
+		\mathrm{MAE} = \frac{1}{N}\sum_{i=1}^{N} |e_i|
+		\label{eq:mae}
+	\end{equation}
+	
+	L'objectif est de tester le modèle dans un environement calme
 	\begin{table}[H]
 		\centering
-		\caption{Expérience 2}
+		\caption{Expérience 1}
 		\label{tab:params_exp_2}
 		\begin{tabular}{ll}
 			\toprule
@@ -837,8 +746,8 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 			Masse ajoutée & $X_{\dot u} = -100$, $Y_{\dot v} = -80$, $N_{\dot r} = -60$ \\
 			Amortissement & $X_u = -50$, $X_{uu} = -180$, $Y_v = -80$, $Y_{vv} = -200$,
 			$N_r = -100$, $N_{rr} = -300$ \\
-			Propulsion & $k = 1,0$ ; $\ell = 1,0$~m \\
-			Vent / houle & \textbf{désactivés} ($V_w = 0$, amplitudes de houle nulles) \\
+			Propulsion & $k = 1,03$ ; $\ell = 1,0$~m \\
+			Vent / vagues & \textbf{désactivés} ($V_w = 0$, amplitudes de houle nulles) \\
 			\bottomrule
 		\end{tabular}
 	\end{table}
@@ -851,7 +760,7 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 	
 	\begin{table}[H]
 		\centering
-		\caption{Expérience 2 -- statistiques de l'écart modèle/mesures}
+		\caption{Expérience 1 -- statistiques de l'écart modèle/mesures}
 		\label{tab:stats_exp_2}
 		\begin{tabular}{lcccccc}
 			\toprule
@@ -876,23 +785,88 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 			\bottomrule
 		\end{tabular}
 	\end{table}
-
+	
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=\textwidth]{comparison_essai2.png}
-		\caption{Expérience 2 -- accélérations mesurées (IMU, cinématique) et sorties du modèle de Fossen
-			(vent et houle désactivés).}
+		\caption{Expérience 1 -- accélérations mesurées (IMU, cinématique) et sorties du modèle de Fossen
+			(vent et vagues désactivés).}
 		\label{fig:exp_2}
 	\end{figure}
 	
-	\paragraph{Observations et interprétation.} 
-	L'isolation du système par la désactivation complète du vent et de la houle permet de révéler la structure hydrodynamique pure du modèle de Fossen. Sur l'axe sway ($a_y$ : biais $0{,}106$~m/s², RMSE $0{,}253$~m/s², MAE $0{,}193$~m/s², MaxAbsError $0{,}780$~m/s² ; $\dot v$ : RMSE $0{,}243$~m/s²), l'examen visuel de la figure montre un accord remarquable : la courbe du modèle (pointillés bleus) épouse presque parfaitement le signal IMU (rouge) sur les régimes permanents en virage, restituant les trois niveaux d'accélération latérale ($0{,}4$, $0{,}8$ et $1{,}1$~m/s² aux segments~3 à 5) ainsi que l'inversion de signe à $-0{,}8$~m/s² (segment~6). La dérivée cinématique $\dot v$ (gris) restant proche de zéro, l'IMU mesure en réalité l'accélération composée $\dot v + r\,u$, ce qui confirme que le terme de Coriolis $(m-X_{\dot u})\,u\,r$ décrit exactement la dynamique latérale du VRX en l'absence de bruits environnementaux. Sur l'axe surge ($a_x$ : biais $0{,}930$~m/s², RMSE $2{,}028$~m/s², MAE $1{,}035$~m/s², MaxAbsError $5{,}923$~m/s²). L'erreur prédominante provient des fronts d'échelon lors des changements de consigne, où le modèle réagit instantanément là où le VRX présente une transition dynamique amortie. Enfin, sur l'axe yaw ($\dot r$ : biais $0{,}112$~rad/s², RMSE $0{,}299$~rad/s², MAE $0{,}223$~rad/s², MaxAbsError $0{,}964$~rad/s²) Fossen prédit une accélération angulaire continue durant toute la durée des virages ($0{,}15$ à $0{,}7$~rad/s²), alors que le VRX stabilisé indique une accélération $\dot r$ nulle après le pic initial, traduisant une sous-estimation de l'amortissement en lacet ($N_r, N_{rr}$).
+	L’expérience n°1, réalisée sans vent ni houle, permet d’isoler la dynamique hydrodynamique du VRX et confirme globalement la structure du modèle de Fossen en 3~DOF. L’accord est particulièrement bon en sway (RMSE $=0{,}253$~m/s²), où le modèle reproduit les différents niveaux d’accélération et leur inversion de signe, confirmant la pertinence du terme de Coriolis $(m-X_{\dot u})ur$. En revanche, des écarts persistent en surge (RMSE $=2{,}028$~m/s²), principalement lors des changements de consigne, ainsi qu’en yaw (RMSE $=0{,}299$~rad/s²), où le modèle surestime l’accélération après le pic initial, suggérant une sous-estimation de l’amortissement hydrodynamique ($N_r,N_{rr}$). Ces résultats montrent ainsi que la formulation théorique est cohérente avec la dynamique du VRX, mais que sa précision quantitative reste limitée par les simplifications du modèle 3~DOF et les imperfections résiduelles de la simulation et des mesures.
 	
-	\paragraph{Conclusion sur la validité du modèle.}
-	L'expérience n°2 valide la structure algébrique du modèle de Fossen en 3~DOF, prouvant de manière décisive sur l'axe sway que les couplages non linéaires de Coriolis traduisent la physique du VRX dès lors que les perturbations extérieures sont retirées. Cependant, sa validité quantitative demeure partielle ($\text{RMSE} = 2{,}028$~m/s² en surge et $0{,}299$~rad/s² en yaw). Ces divergences mettent en évidence les frontières d'application de la formulation théorique face à trois limites structurelles : (i)~les simplifications inhérentes à la réduction 3~DOF (omission des couplages verticaux, de roulis et de pilonnement) et (ii)~le caractère stochastique résiduel lié aux bruits de mesure des capteurs et aux imperfections du moteur physique de Gazebo.
+	\subsection{Validation 2}
+	\label{sec:exp_1}
 	
-	\subsubsection{Expérience n°3}
+	
+	
+
+	Le jeu de paramètres initial (tableau~\ref{tab:params_exp_1}) reprend des valeurs
+	hydrodynamiques raisonnables pour le drone, avec $k = 1$ et $\ell = 1$~m : les consignes de
+	propulsion y sont donc interprétées directement comme des newtons et des newtons-mètres.
+	
+	\begin{table}[H]
+		\centering
+		\caption{Expérience 2 -- jeu de paramètres initial}
+		\label{tab:params_exp_1}
+		\begin{tabular}{ll}
+			\toprule
+			\textbf{Groupe} & \textbf{Valeurs} \\
+			\midrule
+			Inertie & $m = 250$~kg, $I_z = 380$~kg·m², $x_g = 0$ \\
+			Masse ajoutée & $X_{\dot u} = -100$, $Y_{\dot v} = -80$, $N_{\dot r} = -60$ \\
+			Amortissement & $X_u = -50$, $X_{uu} = -180$, $Y_v = -80$, $Y_{vv} = -200$,
+			$N_r = -100$, $N_{rr} = -300$ \\
+			Propulsion & $k = 1,03$ ; $\ell = 1,0$~m \\
+			Vent & $V_w = 5$~m/s, direction $20^\circ$, $(c_x, c_y, c_n) = (0,5;\,0,5;\,0,33)$ \\
+			Houle & $T_p = 10$~s, dérive $X = 20$~N, amplitudes $60/60/30$, phases $0$\footnotemark \\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{comparison_essai1.png}
+		\caption{Expérience 2 -- accélérations mesurées (IMU, cinématique) et prédites par le modèle}
+		\label{fig:exp_1}
+	\end{figure}
+	
+	\paragraph{Indicateurs globaux.}
+	Le tableau~\ref{tab:stats_exp_1} résume les statistiques de l'erreur de prédiction
+	
+	\begin{table}[H]
+		\centering
+		\caption{Epérience n°2}
+		\label{tab:stats_exp_1}
+		\begin{tabular}{lcccccc}
+			\toprule
+			\textbf{Comparaison} & \textbf{Biais} & \textbf{Écart-type} & \textbf{RMSE}
+			& \textbf{MAE}\\
+			\midrule
+			
+			$\dot r$ : Fossen $-$ cinématique
+			& $+0,184$ & $0,280$ & $0,335$ & $0,265$ \\
+			
+			$a_x$ : Fossen $-$ IMU
+			& $+0,775$ & $1,826$ & $1,984$ & $1,228$\\
+			
+			$a_y$ : Fossen $-$ IMU
+			& $+0,004$ & $0,602$ & $0,602$ & $0,490$\\
+			
+			\bottomrule
+		\end{tabular}
+	\end{table}
+	
+	L’analyse des résultats montre que le comportement du VRX valide globalement la structure du modèle de Fossen en 3~DOF, notamment les vitesses d’équilibre en surge, les couplages de Coriolis et la directionnalité des rotations. Les principales divergences concernent la dynamique transitoire : en surge, le retard de $1$ à $2$~s observé lors des échelons de poussée explique une partie de l’erreur (RMSE $=1{,}984$~m/s²), tandis qu’en sway, la surestimation des accélérations lors des virages (RMSE $=0{,}602$~m/s²) s’explique notamment par la réduction du modèle 6~DOF vers 3~DOF. En yaw, malgré une polarité correctement reproduite, le modèle surestime la réactivité en rotation (RMSE $=0{,}335$~rad/s²), indiquant que l’amortissement hydrodynamique ($N_r,N_{rr}$) est sous-évalué. Ainsi, les écarts observés ne remettent pas en cause la formulation théorique du modèle, mais montrent ses limites quantitatives face aux simplifications du modèle 3~DOF et aux effets dynamiques et stochastiques présents dans l’environnement VRX/Gazebo.
+	
+	
+	
+	
+	
+	\subsection{Validation n°3}
 	\label{sec:exp_3}
 	
 	\paragraph{Paramètres de l'Expérience.}
@@ -912,7 +886,7 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 			Masse ajoutée & $X_{\dot u} = -100$, $Y_{\dot v} = -80$, $N_{\dot r} = -60$ \\
 			Amortissement & $X_u = -50$, $X_{uu} = -180$, $Y_v = -80$, $Y_{vv} = -200$,
 			$N_r = -100$, $N_{rr} = -300$ \\
-			Propulsion & $k = 1,0$ ; $\ell = 1,0$~m \\
+			Propulsion & $k = 1,03$ ; $\ell = 1,0$~m \\
 			Vent & $V_w = 15$~m/s, direction $240^\circ$, $(c_x, c_y, c_n) = (0,5;\,0,5;\,0,33)$ \\
 			Houle & $T_p = 2$~s, dérive $X = 20$~N, amplitudes $300/300/100$, phases $0$\footnotemark \\
 			\bottomrule
@@ -958,24 +932,21 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 		\label{fig:exp_3}
 	\end{figure}
 	
-	\paragraph{Observations et interprétation.}
-	L'évaluation du modèle ré-étalonné lors de cette troisième expérience, conduite sous des sollicitations environnementales sévères ($V_w = 15$~m/s, houle $T_p = 2$~s), confirme la capacité de la formulation de Fossen à capturer la dynamique transversale et rotative, tout en faisant émerger une dégradation sur l'axe longitudinal. Sur l'axe sway ($a_y$ : biais $0{,}123$~m/s², RMSE $0{,}375$~m/s², MAE $0{,}310$~m/s², écart-type $0{,}354$~m/s², MaxAbsError $1{,}079$~m/s²), la trajectoire moyenne en pointillés bleus épousant mieux la dynamique de virage malgré l'apparition de fortes oscillations haute fréquence imprimées par la houle à $T_p = 2$~s. Sur l'axe yaw ($\dot r$ : biais $0{,}109$~rad/s², RMSE $0{,}268$~rad/s², MAE $0{,}182$~rad/s², écart-type $0{,}245$~rad/s², MaxAbsError $1{,}094$~rad/s²). En revanche, l'axe surge ($a_x$ : biais $1{,}427$~m/s², RMSE $2{,}251$~m/s², MAE $1{,}586$~m/s², écart-type $1{,}741$~m/s², MaxAbsError $6{,}115$~m/s²), le modèle surestimant systématiquement l'accélération longitudinale en régime permanent et lors des transitoires d'échelon. Ces résultats illustrent le caractère stochastique fort insufflé par le moteur physique de Gazebo sous forte houle et confirment que les perturbations d'environnement ainsi que les couplages 6~DOF$\rightarrow$3~DOF imposent un plancher d'erreur incompressible.
-	
-	\paragraph{Conclusion sur la validité du modèle.}
-	Cette troisième expérience valide la capacité du modèle de Fossen 3~DOF à décrire la dynamique globale du VRX sous environnement perturbé, en particulier pour les couplages de Coriolis en sway et l'amortissement en lacet. Néanmoins, sa validité quantitative globale reste partielle ($\text{RMSE} = 2{,}251$~m/s² en surge, $0{,}375$~m/s² en sway et $0{,}268$~rad/s² en yaw). Ces écarts résiduels démontrent les frontières d'un modèle plan idéal face à trois facteurs limitants majeurs : (i)~les simplifications inhérentes à la réduction 3~DOF qui négligent les transferts d'énergie vers les degrés de liberté hors-plan (roulis, pilonnement, tangage) et (ii)~l'aléa environnemental stochastique propre à Gazebo (vent turbulent, houle stochastique et bruits de mesure capteurs) qui introduit des fluctuations haute fréquence non modélisables par une formulation théorique déterministe.
+	L’expérience n°3, menée sous des conditions environnementales sévères ($V_w=15$~m/s, $T_p=2$~s), confirme la capacité du modèle de Fossen en 3~DOF à reproduire globalement les dynamiques transversale et rotative du VRX, malgré les perturbations importantes introduites par la houle. L’accord reste satisfaisant en sway (RMSE $=0{,}375$~m/s²) et en yaw (RMSE $=0{,}268$~rad/s²), tandis que l’erreur augmente en surge (RMSE $=2{,}251$~m/s²), où le modèle surestime l’accélération longitudinale lors des régimes permanents et des transitoires. Ces écarts montrent que, malgré une bonne cohérence avec la dynamique globale du VRX, la précision quantitative du modèle reste limitée par les simplifications de la représentation 3~DOF et par les perturbations stochastiques de l’environnement simulé, notamment la houle et les bruits de mesure.
 	
 	
-	
-	\newpage
 	% =====================================================
 	% TROISIÈME PARTIE : CONCLUSION
 	% =====================================================
 	\paragraph{Conclusion sur la comparaison des 3 expériences et la validation du modèle.}
 	La comparaison synthétique des trois expériences indépendantes permet de porter un jugement clair sur la capacité du modèle de Fossen en 3~DOF à décrire la dynamique du VRX :
 	\begin{itemize}[label=--]
-		\item \textbf{L'expérience~1} a servi de point de référence nominal, confirmant la pertinence de la structure globale du modèle en régime permanent (surge) et en polarité (yaw), tout en isolant des biais spectraux et transitoires.
 		\item \textbf{L'expérience~2}, menée en environnement totalement isolé (vent et houle désactivés), a apporté la preuve décisive de la validité du terme de Coriolis $(m-X_{\dot u})\,u\,r$ en sway, la sortie du modèle épousant parfaitement l'accélération mesurée par l'IMU ($\text{RMSE} = 0{,}253$~m/s²).
-		\item \textbf{L'expérience~3} a démontré la faisabilité du ré-étalonnage des coefficients d'amortissement en lacet ($N_r, N_{rr}$) sous perturbations sévères, réduisant l'erreur RMSE en yaw de $20\,\%$ et en sway de $34\,\%$, tout en soulignant le compromis d'ajustement inter-axes avec le surge.
+		
+		\item \textbf{L'expérience~1} a servi de point de référence nominal, confirmant la pertinence de la structure globale du modèle en régime permanent (surge) et en polarité (yaw), tout en isolant des biais spectraux et transitoires.
+		
+		\item \textbf{L'expérience~3} montre toutefois que, sous des perturbations sévères, les hypothèses du passage du modèle 6~DOF au modèle 3~DOF sont dépassées, limitant ainsi la précision du modèle réduit.
+		
 	\end{itemize}
 	
 	En synthèse, ces travaux valident la structure algébrique et théorique du modèle de Fossen en 3~DOF pour représenter le comportement plan du VRX. Néanmoins, sa validité quantitative globale reste partielle sous sa formulation idéale actuelle. Les divergences observées ne remettent pas en cause la formulation mathématique elle-même, mais définissent ses limites d'application face à deux facteurs critiques principaux: (i)~les simplifications inhérentes à la réduction 3~DOF et les simplifications du modèle où il suit juste le mouvement selon surge, sway et yaw et (ii)~le caractère stochastique de l'environnement sous Gazebo (bruits capteurs, variations aléatoires de la houle et du vent).
@@ -1238,7 +1209,7 @@ Ces indicateurs sont calculés séparément par axe (surge, sway, yaw).
 	
 	La seconde contribution concerne le développement d'une première stratégie de guidage point à point. Une loi de guidage proportionnelle associée à une commande différentielle des deux propulseurs a permis au catamaran de rejoindre les différentes cibles dans l'environnement simulé. Cette approche constitue une première étape vers l'autonomie du véhicule. Toutefois, les expérimentations ont également montré les limites d'une commande purement proportionnelle, notamment en présence de perturbations persistantes et lors de variations importantes du comportement dynamique du véhicule. En particulier, le réglage fixe du gain $K_p$ impose un compromis entre rapidité de réaction et stabilité, tandis qu'une perturbation constante peut conduire à une erreur résiduelle. Ces limites motivent naturellement l'évolution vers des stratégies de commande plus robustes.
 	
-	\subsection{Perspectives}
+	\section{Perspectives}
 	
 	Les travaux réalisés constituent ainsi une première brique d'une architecture plus complète de guidage, navigation et contrôle. Plusieurs axes d'amélioration peuvent être envisagés.
 	
