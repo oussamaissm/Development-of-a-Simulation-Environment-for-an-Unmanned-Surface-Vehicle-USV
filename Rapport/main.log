@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.19)  12 SEP 2026 16:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.8.19)  12 SEP 2026 17:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1401,10 +1401,10 @@ Overfull \hbox (21.82974pt too wide) in paragraph at lines 741--753
  [][] 
  []
 
-<comparison_essai2.png, id=530, 867.24pt x 650.43pt>
-File: comparison_essai2.png Graphic file (type png)
-<use comparison_essai2.png>
-Package pdftex.def Info: comparison_essai2.png  used on input line 792.
+<comparison_essai1.png, id=530, 867.24pt x 650.43pt>
+File: comparison_essai1.png Graphic file (type png)
+<use comparison_essai1.png>
+Package pdftex.def Info: comparison_essai1.png  used on input line 792.
 (pdftex.def)             Requested size: 455.24411pt x 341.43124pt.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1425,11 +1425,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[23 <./comparison_essai2.png>]
-<comparison_essai1.png, id=546, 867.24pt x 650.43pt>
-File: comparison_essai1.png Graphic file (type png)
-<use comparison_essai1.png>
-Package pdftex.def Info: comparison_essai1.png  used on input line 832.
+[23 <./comparison_essai1.png>]
+<comparison_essai2.png, id=546, 867.24pt x 650.43pt>
+File: comparison_essai2.png Graphic file (type png)
+<use comparison_essai2.png>
+Package pdftex.def Info: comparison_essai2.png  used on input line 832.
 (pdftex.def)             Requested size: 364.19667pt x 273.14896pt.
 
 
@@ -1439,7 +1439,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[24 <./comparison_essai1.png>]
+[24 <./comparison_essai2.png>]
 Overfull \hbox (21.82974pt too wide) in paragraph at lines 881--894
  [][] 
  []
@@ -1623,7 +1623,7 @@ public/cm-super/sfsx1095.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-
 super/sfsx1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfti
 1200.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt0800.pfb><
 c:/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on main.pdf (36 pages, 5353593 bytes).
+Output written on main.pdf (36 pages, 5466697 bytes).
 PDF statistics:
  879 PDF objects out of 1000 (max. 8388607)
  722 compressed objects within 8 object streams
