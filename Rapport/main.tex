@@ -956,21 +956,21 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	% =====================================================
 	% TROISIÈME PARTIE : GUIDAGE ET CONTRÔLE DU CATAMARAN
 	% =====================================================
-	\section{Guidage et contrôle du catamaran}
+	\section{Guidage du catamaran}
 	\label{sec:guidage}
 	
-	La validation du modèle dynamique (Partie~2) constitue le prérequis indispensable au développement des lois de commande. L'objectif final du projet étant la collecte de macro-déchets, le catamaran doit être capable de naviguer de manière autonome entre des points d'intérêt définis, en compensant les perturbations environnementales. Cette partie détaille l'architecture logicielle, la loi de guidage proportionnelle mise en œuvre et les résultats obtenus en simulation.
+	La validation du modèle dynamique (Partie~2) constitue le prérequis indispensable au développement des lois de commande. L'objectif final du projet est la navigation vers les déchets, le catamaran doit être capable de naviguer de manière autonome entre des points d'intérêt définis, en compensant les perturbations environnementales. Cette partie détaille l'architecture logicielle, la loi de guidage proportionnelle mise en œuvre et les résultats obtenus en simulation.
 	
 	\begin{figure}[H]
 		\centering
-		% TODO : Remplacer par votre capture d'écran RViz ou votre tracé Python de la trajectoire
-		\includegraphics[width=0.8\textwidth]{guide.png} 
-		\caption{Le but est d'arriver au point cible (déchets).}
+
+		\includegraphics[width=0.8\textwidth]{guide.jpg} 
+		\caption{Le but est d'arriver au point cible (déchet).}
 		\label{fig:dechet}
 	\end{figure}
 	
-	\subsection{Stratégie de guidage}
-	Pour assurer la navigation point à point, nous avons implémenté une loi de guidage proportionnelle, couplée à un contrôleur proportionnel en cap. Le principe est de calculer en temps réel le cap désiré $\psi_c$ pointant vers la cible actuelle $P_c(x_c, y_c)$, puis de générer des commandes de propulsion pour annuler l'erreur de cap $e_\psi$.
+	\subsection{Stratégie de guidage: Commande proportionnelle}
+	Pour assurer la navigation point à point, nous avons implémenté une loi de guidage proportionnelle, couplée à un contrôleur proportionnel en cap. Le principe est de calculer en temps réel le cap désiré $\psi_c$ pointant vers la cible actuelle $P_c(x_c, y_c, \psi_c)$, puis de générer des commandes de propulsion pour annuler l'erreur de cap $e_\psi$.
 	
 	Soit $(x, y)$ la position actuelle du catamaran dans le repère local. Le vecteur d'erreur de position s'écrit :
 	\begin{equation}
@@ -1011,15 +1011,15 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 				% ==========================================
 				\node[blueblock] (gps) {
 					\textbf{GPS}\\[2pt]
-					\scriptsize Latitude, Longitude
-				};
-				
-				\node[blueblock, below=0.9cm of gps] (imu) {
+					\scriptsize(Latitude, Longitude)\\
 					\textbf{IMU}\\[2pt]
-					\scriptsize Accélérations, Vitesses angulaires
+					\scriptsize (Accélérations, Vitesses angulaires)
+					
 				};
 				
-				\node[blueblock, fill=bluebg!50, below=1.6cm of imu] (sorties) {
+				
+				
+				\node[blueblock, fill=bluebg!50, below=1.6cm of gps] (sorties) {
 					\textbf{Sorties}\\[3pt]
 					\scriptsize $\bullet$ Position $(x, y)$\\[2pt]
 					\scriptsize $\bullet$ Cap ($\psi$)
@@ -1134,7 +1134,6 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 				% FLÈCHES
 				% ==========================================
 				\draw[line] (gps) -- (sorties);
-				\draw[line] (imu) -- (sorties);
 				\draw[line] (sorties.east) -- ++(0.5,0) |- (v_erreur.west);
 				\draw[line] (w_actif) -- (v_erreur);
 				\draw[line] (v_erreur) -- (dist);
@@ -1174,7 +1173,7 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	
 
 	\subsection{Résultats de simulation et analyse}
-	Pour évaluer les performances du guidage, un scénario de navigation passant par quatre waypoints formant un rectangle a été exécuté dans le monde \texttt{sydney\_regatta}, avec des conditions de vent modérées ($V_w = 5$~m/s).
+	Pour évaluer les performances du guidage, un scénario de navigation passant par quatre waypoints formant un rectangle a été exécuté dans le monde \texttt{sydney\_regatta}, avec des conditions de vent modérées ($V_w = 5$~m/s) et les vagues sont désactivées.
 	
 	\begin{figure}[H]
 		\centering
@@ -1185,9 +1184,9 @@ La résolution du modèle consiste alors à déterminer l'accélération du véh
 	
 	L'analyse de la figure~\ref{fig:traj_guidage} et des journaux d'exécution révèle plusieurs points clés :
 	\begin{itemize}[label=--]
-		\item \textbf{Convergence vers la ligne de visée :} Après chaque changement de waypoint, le catamaran effectue un virage coordonné pour aligner son cap $\psi$ sur $\psi_d$. La poussée différentielle permet une rotation sur place efficace, validant le couplage lacet-propulsion du modèle.
+		\item \textbf{Convergence vers la ligne de visée :} Après chaque changement de waypoint, le catamaran effectue un virage coordonné pour aligner son cap $\psi$ sur $\psi_c$. La poussée différentielle permet une rotation sur place efficace, validant le couplage lacet-propulsion du modèle.
 		\item \textbf{Erreur de cap en régime permanent :} En ligne droite, l'erreur $e_\psi$ oscille autour de zéro avec une amplitude maximale de $\pm 0{,}15$~rad. Cette légère oscillation est inhérente au contrôleur purement proportionnel face aux perturbations stochastiques de la houle.
-		\item \textbf{Validation du seuil de basculement :} Le rayon de $4$~m s'est avéré adapté. Le drone ne présente pas d'oscillations excessives au voisinage des waypoints et enchaîne les segments de manière fluide.
+		\item \textbf{Validation du seuil de basculement :} Le rayon de $1$~m s'est avéré adapté. Le drone ne présente pas d'oscillations excessives au voisinage des waypoints et enchaîne les segments de manière fluide.
 	\end{itemize}
 	
 	\subsection{Limites et perspectives d'amélioration}

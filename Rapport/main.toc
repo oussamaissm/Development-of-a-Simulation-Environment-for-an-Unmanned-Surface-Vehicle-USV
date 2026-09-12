@@ -41,19 +41,19 @@
 \contentsline {paragraph}{Paramètres de l'Expérience.}{25}{section*.27}%
 \contentsline {paragraph}{Indicateurs globaux.}{25}{section*.29}%
 \contentsline {paragraph}{Conclusion sur la comparaison des 3 expériences et la validation du modèle.}{26}{section*.32}%
-\contentsline {section}{\numberline {5}Guidage et contrôle du catamaran}{28}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Stratégie de guidage}{28}{subsection.5.1}%
+\contentsline {section}{\numberline {5}Guidage du catamaran}{28}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Stratégie de guidage: Commande proportionnelle}{28}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Architecture logicielle du flux de guidage}{29}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}Loi de commande et répartition des poussées}{29}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}Résultats de simulation et analyse}{29}{subsection.5.4}%
 \contentsline {subsection}{\numberline {5.5}Limites et perspectives d'amélioration}{30}{subsection.5.5}%
 \contentsline {section}{\numberline {6}Conclusion générale et perspectives}{31}{section.6}%
 \contentsline {section}{\numberline {7}Perspectives}{31}{section.7}%
-\contentsline {section}{Bibliographie}{33}{section*.36}%
-\contentsline {section}{\numberline {A}Glossaire des variables du modèle de Fossen 3-DOF}{33}{appendix.A}%
-\contentsline {section}{\numberline {B}Relations mathématiques implantées dans les codes}{34}{appendix.B}%
-\contentsline {subsection}{\numberline {B.1}Mesures et prétraitements}{34}{subsection.B.1}%
-\contentsline {subsection}{\numberline {B.2}Modèle de Fossen 3-DDL}{35}{subsection.B.2}%
-\contentsline {subsection}{\numberline {B.3}Forces d'environnement}{35}{subsection.B.3}%
-\contentsline {subsection}{\numberline {B.4}Comparaison avec l'accéléromètre}{35}{subsection.B.4}%
-\contentsline {subsection}{\numberline {B.5}Cinématique intégrée}{35}{subsection.B.5}%
+\contentsline {section}{Bibliographie}{34}{section*.36}%
+\contentsline {section}{\numberline {A}Glossaire des variables du modèle de Fossen 3-DOF}{34}{appendix.A}%
+\contentsline {section}{\numberline {B}Relations mathématiques implantées dans les codes}{35}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}Mesures et prétraitements}{35}{subsection.B.1}%
+\contentsline {subsection}{\numberline {B.2}Modèle de Fossen 3-DDL}{36}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}Forces d'environnement}{36}{subsection.B.3}%
+\contentsline {subsection}{\numberline {B.4}Comparaison avec l'accéléromètre}{36}{subsection.B.4}%
+\contentsline {subsection}{\numberline {B.5}Cinématique intégrée}{36}{subsection.B.5}%
