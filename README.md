@@ -207,7 +207,7 @@ The theoretical framework provides the basis for modeling and analyzing marine v
 
 # Author
 
-**Oussama Ismaili**
+**Oussama Ismaili** and **Fnadi Mohamed**
 
 Engineering Student — Computer Science, Data Science & Artificial Intelligence
 
