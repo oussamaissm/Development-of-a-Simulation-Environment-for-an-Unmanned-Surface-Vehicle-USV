@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Guidage USV - Version Multi-Waypoints SANS filtre de Kalman
-- Position obtenue directement à partir du GPS (projection plane locale).
-- Cap obtenu directement à partir du quaternion IMU.
-- Suivi séquentiel d'une liste de cibles (waypoints).
-- Freinage et passage automatique au waypoint suivant.
-- Enregistrement de la trajectoire complète et création du graphique pour le rapport.
+USV Guidance - Multi-Waypoint Version WITHOUT Kalman Filter
+- Position obtained directly from GPS (local plane projection).
+- Heading obtained directly from the IMU quaternion.
+- Sequential tracking of a list of waypoints.
+- Braking and automatic transition to the next waypoint.
+- Complete trajectory logging and plot generation for the report.
 """
 
 import rclpy
@@ -25,8 +25,8 @@ except ImportError:
 
 
 class SimplePositionEstimator:
-    """Estime la position (à partir du GPS) et le cap (à partir de l'IMU),
-    sans fusion par filtre de Kalman."""
+    """Estimates position from GPS and heading from IMU,
+    without Kalman filter fusion."""
 
     def __init__(self):
         self.origin_lat = None
@@ -42,7 +42,7 @@ class SimplePositionEstimator:
         return x_gps, y_gps
 
     def update_yaw_from_quaternion(self, qx, qy, qz, qw):
-        # Conversion quaternion -> yaw (rotation autour de Z)
+        # Convert quaternion to yaw (rotation around the Z axis)
         siny_cosp = 2.0 * (qw * qz + qx * qy)
         cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz)
         self.yaw = math.atan2(siny_cosp, cosy_cosp)
@@ -52,12 +52,15 @@ class SimplePositionEstimator:
             self.origin_lat = lat
             self.origin_lon = lon
             return 0.0, 0.0
+
         R_earth = 6378137.0
         dlat = math.radians(lat - self.origin_lat)
         dlon = math.radians(lon - self.origin_lon)
         lat0 = math.radians(self.origin_lat)
+
         x = dlon * math.cos(lat0) * R_earth
         y = dlat * R_earth
+
         return x, y
 
     def get_position_local(self):
@@ -71,7 +74,7 @@ class USV_GuidanceNode(Node):
     def __init__(self):
         super().__init__('usv_guidance_node')
 
-        # LISTE DES WAYPOINTS (Ajoute tes coordonnées X, Y ici)
+        # WAYPOINT LIST (Add your X, Y coordinates here)
         self.targets = [
             (-800.0, 300.0),
             (-720.0, 370.0),
@@ -80,6 +83,7 @@ class USV_GuidanceNode(Node):
             (-900.0, 510.0),
             (-800.0, 300.0)
         ]
+
         self.current_target_idx = 0
 
         self.declare_parameter('stop_distance', 8.0)
@@ -92,7 +96,10 @@ class USV_GuidanceNode(Node):
         self.initial_x = self.get_parameter('initial_x').value
         self.initial_y = self.get_parameter('initial_y').value
 
-        self.get_logger().info(f"Nombre total de waypoints : {len(self.targets)}")
+        self.get_logger().info(
+            f"Total number of waypoints: {len(self.targets)}"
+        )
+
         self._log_current_target()
 
         self.estimator = SimplePositionEstimator()
@@ -106,11 +113,31 @@ class USV_GuidanceNode(Node):
         self.trajectory_log = []
         self.start_time = None
 
-        self.gps_sub = self.create_subscription(NavSatFix, '/wamv/sensors/gps/gps/fix', self.gps_cb, 10)
-        self.imu_sub = self.create_subscription(Imu, '/wamv/sensors/imu/imu/data', self.imu_cb, 10)
+        self.gps_sub = self.create_subscription(
+            NavSatFix,
+            '/wamv/sensors/gps/gps/fix',
+            self.gps_cb,
+            10
+        )
 
-        self.left_thruster_pub = self.create_publisher(Float64, '/wamv/thrusters/left/thrust', 10)
-        self.right_thruster_pub = self.create_publisher(Float64, '/wamv/thrusters/right/thrust', 10)
+        self.imu_sub = self.create_subscription(
+            Imu,
+            '/wamv/sensors/imu/imu/data',
+            self.imu_cb,
+            10
+        )
+
+        self.left_thruster_pub = self.create_publisher(
+            Float64,
+            '/wamv/thrusters/left/thrust',
+            10
+        )
+
+        self.right_thruster_pub = self.create_publisher(
+            Float64,
+            '/wamv/thrusters/right/thrust',
+            10
+        )
 
         self.kp_yaw = 300.0
         self.max_thrust = 600.0
@@ -120,41 +147,68 @@ class USV_GuidanceNode(Node):
 
     def _log_current_target(self):
         tx, ty = self.targets[self.current_target_idx]
+
         self.get_logger().info(
-            f"--> Navigation vers Waypoint {self.current_target_idx + 1}/{len(self.targets)} : X={tx:.1f}, Y={ty:.1f}"
+            f"--> Navigating to Waypoint "
+            f"{self.current_target_idx + 1}/{len(self.targets)}: "
+            f"X={tx:.1f}, Y={ty:.1f}"
         )
 
     def gps_cb(self, msg):
         if msg.status.status >= 0:
-            x_gps_loc, y_gps_loc = self.estimator.update_gps_position(msg.latitude, msg.longitude)
+            x_gps_loc, y_gps_loc = self.estimator.update_gps_position(
+                msg.latitude,
+                msg.longitude
+            )
+
             self.gps_received = True
 
             if self.offset_x is None:
                 pos_local = self.estimator.get_position_local()
+
                 self.offset_x = self.initial_x - pos_local[0]
                 self.offset_y = self.initial_y - pos_local[1]
-                self.start_time = self.get_clock().now().nanoseconds * 1e-9
+
+                self.start_time = (
+                    self.get_clock().now().nanoseconds * 1e-9
+                )
 
             if self.offset_x is not None:
-                t = self.get_clock().now().nanoseconds * 1e-9 - self.start_time
+                t = (
+                    self.get_clock().now().nanoseconds * 1e-9
+                    - self.start_time
+                )
+
                 pos_local = self.estimator.get_position_local()
+
                 x_est_world = pos_local[0] + self.offset_x
                 y_est_world = pos_local[1] + self.offset_y
+
                 x_gps_world = x_gps_loc + self.offset_x
                 y_gps_world = y_gps_loc + self.offset_y
 
-                self.trajectory_log.append([t, x_est_world, y_est_world, x_gps_world, y_gps_world])
+                self.trajectory_log.append(
+                    [t, x_est_world, y_est_world, x_gps_world, y_gps_world]
+                )
 
     def imu_cb(self, msg):
         self.estimator.update_yaw_from_quaternion(
-            msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w
+            msg.orientation.x,
+            msg.orientation.y,
+            msg.orientation.z,
+            msg.orientation.w
         )
+
         self.imu_received = True
 
     def control_loop(self):
         self.log_counter += 1
 
-        if not (self.gps_received and self.imu_received and self.offset_x is not None):
+        if not (
+            self.gps_received
+            and self.imu_received
+            and self.offset_x is not None
+        ):
             return
 
         if self.all_targets_reached:
@@ -167,101 +221,202 @@ class USV_GuidanceNode(Node):
         y_world = pos_local[1] + self.offset_y
 
         target_x, target_y = self.targets[self.current_target_idx]
+
         dx = target_x - x_world
         dy = target_y - y_world
         dist = math.hypot(dx, dy)
 
-        # Vérification d'atteinte du waypoint actuel
+        # Check whether the current waypoint has been reached
         if dist <= self.stop_distance:
-            self.get_logger().info(f"Waypoint {self.current_target_idx + 1} atteint ! ({dist:.1f}m)")
+            self.get_logger().info(
+                f"Waypoint {self.current_target_idx + 1} reached! "
+                f"({dist:.1f}m)"
+            )
 
-            # Passage au waypoint suivant
+            # Move to the next waypoint
             if self.current_target_idx < len(self.targets) - 1:
                 self.current_target_idx += 1
                 self._log_current_target()
                 return
+
             else:
-                self.get_logger().info("Tous les waypoints ont été atteints ! Arrêt de la mission.")
+                self.get_logger().info(
+                    "All waypoints have been reached! "
+                    "Stopping the mission."
+                )
+
                 self.all_targets_reached = True
                 self.publish_thrust(0.0, 0.0)
                 self.save_trajectory()
                 return
 
         psi_d = math.atan2(dy, dx)
-        e_psi = psi_d - yaw
-        e_psi = math.atan2(math.sin(e_psi), math.cos(e_psi))
 
-        # Décélération si proche du dernier waypoint, sinon vitesse soutenue
-        if self.current_target_idx == len(self.targets) - 1 and dist < self.slow_distance:
-            ratio = (dist - self.stop_distance) / (self.slow_distance - self.stop_distance)
+        e_psi = psi_d - yaw
+        e_psi = math.atan2(
+            math.sin(e_psi),
+            math.cos(e_psi)
+        )
+
+        # Decelerate near the final waypoint; otherwise maintain cruising thrust
+        if (
+            self.current_target_idx == len(self.targets) - 1
+            and dist < self.slow_distance
+        ):
+            ratio = (
+                (dist - self.stop_distance)
+                / (self.slow_distance - self.stop_distance)
+            )
+
             T_base = 80.0 + ratio * 200.0
+
         else:
             T_base = self.max_thrust
 
         T_diff = self.kp_yaw * e_psi
 
-        T_L = max(0.0, min(self.max_thrust, T_base - T_diff))
-        T_R = max(0.0, min(self.max_thrust, T_base + T_diff))
+        T_L = max(
+            0.0,
+            min(self.max_thrust, T_base - T_diff)
+        )
+
+        T_R = max(
+            0.0,
+            min(self.max_thrust, T_base + T_diff)
+        )
 
         if self.log_counter % 10 == 0:
             self.get_logger().info(
-                f"WP {self.current_target_idx + 1} | Dist: {dist:.1f}m | Cap err: {math.degrees(e_psi):.1f}deg"
+                f"WP {self.current_target_idx + 1} | "
+                f"Distance: {dist:.1f}m | "
+                f"Heading error: {math.degrees(e_psi):.1f}deg"
             )
 
         self.publish_thrust(T_L, T_R)
 
     def publish_thrust(self, tl, tr):
-        self.left_thruster_pub.publish(Float64(data=tl))
-        self.right_thruster_pub.publish(Float64(data=tr))
+        self.left_thruster_pub.publish(
+            Float64(data=tl)
+        )
+
+        self.right_thruster_pub.publish(
+            Float64(data=tr)
+        )
 
     def save_trajectory(self):
         if not self.trajectory_log:
             return
 
-        csv_filename = "trajectoire_usv_multi.csv"
-        plot_filename = "trajectoire_usv_multi.png"
+        csv_filename = "usv_trajectory_multi.csv"
+        plot_filename = "usv_trajectory_multi.png"
 
         with open(csv_filename, mode='w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(['temps_s', 'x_est', 'y_est', 'x_gps', 'y_gps'])
+
+            writer.writerow([
+                'time_s',
+                'x_est',
+                'y_est',
+                'x_gps',
+                'y_gps'
+            ])
+
             writer.writerows(self.trajectory_log)
-        self.get_logger().info(f"Données enregistrées dans '{os.path.abspath(csv_filename)}'")
+
+        self.get_logger().info(
+            f"Data saved to '{os.path.abspath(csv_filename)}'"
+        )
 
         if HAS_MATPLOTLIB:
             data = np.array(self.trajectory_log)
+
             x_est, y_est = data[:, 1], data[:, 2]
             x_gps, y_gps = data[:, 3], data[:, 4]
 
             plt.figure(figsize=(10, 8))
-            plt.plot(x_gps, y_gps, 'r.', alpha=0.2, label='GPS brut')
-            plt.plot(x_est, y_est, 'b-', linewidth=2, label='Trajectoire estimée')
-            plt.plot(self.initial_x, self.initial_y, 'go', markersize=10, label='Départ')
 
-            # Affichage de tous les waypoints
+            plt.plot(
+                x_gps,
+                y_gps,
+                'r.',
+                alpha=0.2,
+                label='Raw GPS'
+            )
+
+            plt.plot(
+                x_est,
+                y_est,
+                'b-',
+                linewidth=2,
+                label='Estimated trajectory'
+            )
+
+            plt.plot(
+                self.initial_x,
+                self.initial_y,
+                'go',
+                markersize=10,
+                label='Start'
+            )
+
+            # Display all waypoints
             targets_np = np.array(self.targets)
-            plt.plot(targets_np[:, 0], targets_np[:, 1], 'r--', alpha=0.5, label='Parcours prévu')
-            for idx, (tx, ty) in enumerate(self.targets):
-                plt.plot(tx, ty, 'rx', markersize=10, markeredgewidth=2)
-                plt.text(tx + 1, ty + 1, f"WP {idx + 1}", fontsize=10, fontweight='bold')
 
-            plt.title('Suivi de parcours multi-waypoints de l\'USV')
-            plt.xlabel('X (mètres)')
-            plt.ylabel('Y (mètres)')
+            plt.plot(
+                targets_np[:, 0],
+                targets_np[:, 1],
+                'r--',
+                alpha=0.5,
+                label='Planned path'
+            )
+
+            for idx, (tx, ty) in enumerate(self.targets):
+                plt.plot(
+                    tx,
+                    ty,
+                    'rx',
+                    markersize=10,
+                    markeredgewidth=2
+                )
+
+                plt.text(
+                    tx + 1,
+                    ty + 1,
+                    f"WP {idx + 1}",
+                    fontsize=10,
+                    fontweight='bold'
+                )
+
+            plt.title('USV Multi-Waypoint Path Tracking')
+            plt.xlabel('X (meters)')
+            plt.ylabel('Y (meters)')
             plt.grid(True)
             plt.legend()
             plt.axis('equal')
-            plt.savefig(plot_filename, dpi=300)
+
+            plt.savefig(
+                plot_filename,
+                dpi=300
+            )
+
             plt.close()
-            self.get_logger().info(f"Graphique généré : '{os.path.abspath(plot_filename)}'")
+
+            self.get_logger().info(
+                f"Plot generated: '{os.path.abspath(plot_filename)}'"
+            )
 
 
 def main(args=None):
     rclpy.init(args=args)
+
     node = USV_GuidanceNode()
+
     try:
         rclpy.spin(node)
+
     except KeyboardInterrupt:
         node.save_trajectory()
+
     finally:
         node.destroy_node()
         rclpy.shutdown()
