@@ -191,3 +191,4 @@ echo "Restart your terminal or run:"
 echo ""
 echo "    source ~/.bashrc"
 echo ""
+
