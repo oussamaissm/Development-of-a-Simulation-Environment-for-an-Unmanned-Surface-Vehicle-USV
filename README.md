@@ -206,16 +206,6 @@ The theoretical framework provides the basis for modeling and analyzing marine v
 
 ---
 
-# Author
-
-**Oussama Ismaili** and **Fnadi Mohamed**
-
-Engineering Student — Computer Science, Data Science & Artificial Intelligence
-
-GitHub: [oussamaissm](https://github.com/oussamaissm)
-
----
-
 ## License
 
 This project contains components based on open-source frameworks and libraries. Please refer to the respective licenses of the included third-party software, including VRX, Gazebo Sim, and ROS 2.
