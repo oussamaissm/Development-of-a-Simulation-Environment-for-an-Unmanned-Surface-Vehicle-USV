@@ -38,7 +38,6 @@ The main objectives of the project are:
 5. Implement a proportional guidance law for autonomous navigation.
 6. Control the vehicle using the left and right thrusters.
 7. Evaluate the ability of the vehicle to follow a desired trajectory.
-8. Provide a foundation for future USV autonomy and marine waste detection research.
 
 ---
 
