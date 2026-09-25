@@ -148,6 +148,8 @@ For example, the vehicle can be tested under different wind velocities and wave 
 
 # Proportional Guidance
 
+![USV Guidage](images/guidage.png)
+
 The autonomous navigation system is based on a **proportional guidance law**.
 
 The objective of the guidance algorithm is to determine the desired heading of the WAM-V according to its position relative to the target.
